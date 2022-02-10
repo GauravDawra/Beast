@@ -1,0 +1,22 @@
+
+a = 6
+b = B
+
+rule cc
+    command = g++-11 $in -o $out
+
+rule obj
+    command = touch A && echo $cf
+
+rule sub
+    command = touch $out && echo $ba
+
+rule love
+    command = echo hello && touch $out && echo hello1
+
+
+build A: obj
+    b = "hello1"
+    cf = "41"
+
+a = 10

@@ -1,0 +1,46 @@
+%{
+// #include <iostream>
+#include <string>
+#include "parser.hpp"
+#include <stdio.h>
+#include <string.h>
+// #include "y.tab.h"
+using namespace Beast;
+using token = Parser::token;
+int line_num = 1;
+#if YYDEBUG == 1
+    #define print(a) printf(a)
+#else
+    #define print(a) 
+#endif
+%}
+
+%option reentrant interactive outfile="scanner.cpp" header="scanner.h"
+%option yylineno
+/* %option debug */
+%%
+
+"def"                     return token::DEF;
+"build"                   return token::BUILD;
+[a-zA-Z][a-zA-Z0-9_]*    yylval->emplace<std::string>(yytext); return token::WORD;
+[0-9]+                  yylval->emplace<int>(atoi(yytext)); return token::NUMBER;
+"\""                      return token::QUOTE;
+"("                       return token::SBRAC;
+")"                       return token::EBRAC;
+":"                       return token::COLON;
+"="                       return token::ASSIGN;
+"*"                      return token::MULTIPLY;
+"+"                      return token::ADD;
+"/"                       return token::DIVIDE;
+"-"                       return token::SUBTRACT;
+\"[^\"]*\"                   yytext[strlen(yytext)-1]='\0'; yylval->emplace<std::string>(yytext + 1); return token::STRING_LIT;
+[a-zA-Z0-9\/.-]*\.[a-zA-Z0-9\.-]+            yylval->emplace<std::string>(yytext); return token::FILENAME;
+\$[a-zA-Z][a-zA-Z0-9_]*     yylval->emplace<std::string>(yytext + 1); return token::DEREF;
+\![ ]*([^\n])*              yylval->emplace<std::string>(yytext + 1); return token::COMMAND;
+"\n"                      line_num++; return token::ENDL;
+" "                  /* ignore whitespace */;
+"\t"                    return token::TAB;
+.                    return (int)yytext[0];
+
+%%
+

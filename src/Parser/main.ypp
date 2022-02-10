@@ -1,0 +1,229 @@
+%{
+
+//g++-11 lex.yy.cpp main.tab.cpp -D__EXTERN_C__ -ly -ll -o main
+// g++-11 lex.yy.cc parser.cpp -o main -lfl -I/opt/homebrew/opt/flex/include -L/opt/homebrew/opt/flex/lib
+// #include <iostream>
+// #include <vector>
+#include <string>
+#include "scanner.h"
+#include "Memory.h"
+extern "C" {
+    int yywrap(yyscan_t yyscanner) { return 1; }
+};
+
+extern "C" int line_num;
+static Beast::SymbolTable s_ScratchTable;
+%}
+
+/* %skeleton "lalr1.cc" */
+%require "3.8"
+%language "c++"
+%define api.parser.class {Parser}
+%define api.namespace {Beast}
+%define api.value.type variant
+/* %define parse.trace */
+%param {yyscan_t scanner}
+
+%defines "parser.hpp"
+%output "parser.cpp"
+
+%code requires {
+    #include <vector>
+    #include <iostream>
+    #include "variable_type.h"
+    #include "Memory.h"
+
+    using string_list = typename std::vector<std::string>;
+    using io_dependancy = typename std::pair<std::string, std::vector<std::string> >;
+    using assign_type = typename std::pair<std::string, MULTI_TYPE>;
+}
+
+%code provides {
+    #define YY_DECL \
+        int yylex(Beast::Parser::semantic_type *yylval, yyscan_t yyscanner)
+    YY_DECL;
+
+    #define ERROR(a) error(a); YYERROR;
+    void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile="beast.build");
+}
+
+%token DEF BUILD QUOTE SBRAC EBRAC COLON ASSIGN MULTIPLY ADD DIVIDE SUBTRACT ENDL TAB
+
+%token <std::string> WORD
+%token <int>         NUMBER
+%token <std::string> DEREF
+%token <std::string> COMMAND
+%token <std::string> FILENAME
+%token <std::string> STRING_LIT
+
+%nterm <std::string> def_head
+%nterm <string_list> build_head_file_list
+%nterm <string_list> build_cmds
+%nterm <MULTI_TYPE>  expr
+/* %nterm <std::string> dep */
+%nterm <io_dependancy> build_head
+%nterm <Beast::BuildRule> build_grp
+%nterm <std::string> func_call
+%nterm <assign_type> assign_stmt
+
+%nonassoc           ASSIGN
+%left               ADD SUBTRACT
+%left               MULTIPLY DIVIDE
+
+%parse-param {Beast::BuildFile& buildFile}
+
+%%
+ 
+stmts:
+                            {;}
+    | stmts stmt            {std::cout << "STMT detected " << line_num << '\n';}
+    ;
+
+stmt:
+      build_grp              {std::cout <<"reached here\n";}
+    | def_grp                {;}
+    | assign_stmt ENDL       {buildFile.set($1.first, $1.second);}
+    | ENDL
+    ;
+
+build_grp:
+    build_head ENDL build_cmds      { 
+        std::cout << "BUILD detected"<<std::endl; 
+        $$.setDependencies($1.first, $1.second);
+        $$.setCommands($3);
+        // std::cout << "YOYOYO  final build commands are:\n";
+        // for(std::string &s : $3)
+        //     std::cout << '\t' << s <<std::endl;
+        $$.setTable(s_ScratchTable);
+        buildFile.addBuildRule($$);
+        s_ScratchTable.clear();
+        // buildFile = s_ScratchTable;
+    }
+    ;
+
+build_head:
+    BUILD build_head_file_list COLON build_head_file_list {
+            if ($2.size() != 1) 
+                error("exactly one output file required");
+            $$.first = $2 [0];
+            $$.second = $4;
+            std::cout << "build head detected for " << $2 [0] << std::endl;
+        }
+    ;
+
+build_head_file_list:
+    |  WORD                              {$$.push_back($1);} // no empty rule...
+    | FILENAME                          {$$.push_back($1);} // to avoid empty lists
+    | build_head_file_list FILENAME     {$$ = $1; $$.push_back($2);}
+    | build_head_file_list WORD         {$$ = $1; $$.push_back($2);}
+    | build_head_file_list STRING_LIT   {$$ = $1; $$.push_back($2);}
+    ;
+
+build_cmds:
+    | build_cmds TAB COMMAND     {$$ = $1; $$.push_back($3); std::cout << "build cmd detected: " << $3 << std::endl; }
+    | build_cmds TAB func_call   {$$ = $1; $$.push_back($3); } // wrong for now... temporary
+    | build_cmds TAB assign_stmt {$$ = $1; s_ScratchTable.set($3.first, $3.second);}
+    | build_cmds ENDL
+    | build_cmds TAB
+    ;
+
+func_call:
+    WORD SBRAC EBRAC     {$$ = $1; std::cout << "Function call detected: " << $1 << std::endl;}                   
+    ;
+
+def_grp:
+    def_head ENDL def_body      {std::cout << "function definition detected at " << line_num << std::endl;}
+    ;
+
+def_head:
+    DEF WORD COLON          {std::cout << "def head detected\n"; $$ = $2;}
+    ;
+
+def_body:
+    | def_body TAB COMMAND      {std::cout << "def body command: "<<$3 << std::endl;}
+    | def_body TAB func_call
+    | def_body TAB assign_stmt
+    | def_body ENDL
+    | def_body TAB
+    ;
+
+
+assign_stmt:
+      WORD ASSIGN expr        {$$ = {$1, $3}; std::cout << "assignment\n";}
+    ;
+
+expr:
+      WORD                          {if(s_ScratchTable.size()) $$ = s_ScratchTable.get($1); else $$ = buildFile.get($1);}
+    | NUMBER                        {$$ = $1;}
+    | STRING_LIT                    {$$ = $1;}
+    | expr ADD expr                 {$$ = add($1, $3); std::cout << "value is " <<$$<< std::endl;}
+    | expr MULTIPLY expr            {$$ = multiply($1, $3); std::cout << "value of multiply is: "<<$$<<std::endl;}
+    | expr DIVIDE expr              {$$ = divide($1, $3); std::cout << "value of divide is: "<<$$<<std::endl;}
+    | expr SUBTRACT expr            {$$ = subtract($1, $3); std::cout << "value of subtract is: "<<$$<<std::endl;}
+    ; 
+
+/* int_expr:
+    NUMBER
+    | WORD                  {std::cout << "I was here\n"; YYERROR;}
+    | int_expr ADD int_expr
+    | int_expr SUBTRACT int_expr
+    | int_expr DIVIDE int_expr
+    | int_expr MULTIPLY int_expr
+    ;
+str_expr:
+    STRING_LIT
+    | WORD                  {std::cout << "NOw I am here\n";}
+    | str_expr ADD str_expr
+    | str_expr MULTIPLY int_expr
+    ; */
+
+%%
+
+
+void Beast::Parser::error(const std::string& msg) {
+    std::cerr << "PARSE ERROR: " << msg <<" at "<<line_num << std::endl;
+    exit(-1);
+}
+
+#ifdef PARSER_TEST
+int main() {
+    yyscan_t scanner;
+    yylex_init(&scanner);
+    /* std::vector<std::string> v; */
+    Beast::BuildFile buildFile;
+    Beast::Parser parser{scanner, buildFile};
+    #if YYDEBUG == 1
+        std::cout << "DEBUGGING..." << std::endl;
+        parser.set_debug_level(true);
+    #endif
+    std::cout << "Scanner and parser generated" << std::endl;
+    parser.parse();
+    /* for(std::string& i : buildFile.m_BuildRules[0].m_InputTargets) {
+        std::cout << i << std::endl;
+    }
+    std::cout << buildFile.m_BuildRules[0].m_OutputTarget << std::endl; */
+    yylex_destroy(scanner);
+    return 0;
+}
+#endif
+
+void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile) {
+    yyscan_t scanner;
+    yylex_init(&scanner);
+    FILE* inputFile_pointer = fopen(inputFile.c_str(), "r");
+    if (inputFile_pointer){
+        yyset_in(inputFile_pointer, scanner);
+    }
+    else{
+        std::cout << "couldn't open file\n";
+        exit(-1);
+    }
+    Beast::Parser parser{scanner, buildFile};
+    #if YYDEBUG == 1
+        std::cout << "DEBUGGING..." << std::endl;
+        parser.set_debug_level(true);
+    #endif
+    std::cout << "Scanner and parser generated" << std::endl;
+    parser.parse();
+    yylex_destroy(scanner);
+}

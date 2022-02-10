@@ -1,0 +1,21 @@
+# source code outputs here
+src/FileDependency/bin_int
+src/Logger/bin_int
+src/Parser/bin_int
+src/ShellInterface/bin_int
+
+src/FileDependency/*.o
+src/Logger/*.o
+src/Parser/*.o
+src/ShellInterface/*.o
+
+# ide-generated scratch files/folders
+cmake-build-debug/
+.idea/
+
+# general
+beast.build
+CMakeLists.txt
+TODO
+main
+test.cpp
