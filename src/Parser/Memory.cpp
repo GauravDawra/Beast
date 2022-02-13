@@ -12,7 +12,13 @@ namespace Beast {
     void SymbolTable::set(const std::string& key, const MULTI_TYPE& value) {
         m_LookupTree[key] = value;
     }
-
+    
+	bool SymbolTable::exists(const std::string& key) const {
+        if(m_LookupTree.find(key) != m_LookupTree.end())
+        	return true;
+        return false;
+    }
+    
     void SymbolTable::changeTable(const SymbolTable& table) {
         m_LookupTree = table.m_LookupTree;
     }
@@ -25,11 +31,56 @@ namespace Beast {
     void BuildRule::addCommand(const std::string& command) {
         m_Commands.push_back(command);
     }
-
+	
+	void BuildRule::resolveCommands(const SymbolTable &baseTable) {
+    	static char DEREF_CHAR = '$'; // character used for dereferencing in commands
+		for (std::string& command : m_Commands) {
+			std::string ans;
+			for(int i=0;i<command.length();i++) {
+				if(command[i] == DEREF_CHAR) {
+					if(i + 1 == command.length()) break;
+					if (command[i+1] == '(') {
+						int j = i;
+						while(j < command.length() and command[j] != ')')
+							j++;
+						if (j == command.length()){
+							RAISE_ERROR_AND_EXIT("irregular dereference in command - " + command, -1);
+						}
+						std::string variable = command.substr(i+2, j-(i+2));
+						if(exists(variable)) {
+							ans += toString(get(variable));
+						} else if(baseTable.exists(variable)) {
+							ans += toString(baseTable.get(variable));
+						} else {
+							ans += command.substr(i, j-i+1); // let it be in the dereference form
+						}
+						i = j;
+					}
+					else { // single letter dereference
+						std::string variable = std::string(1, command[i+1]);
+						if(exists(variable)) {
+							ans += toString(get(variable));
+						} else if(baseTable.exists(variable)) {
+							ans += toString(baseTable.get(variable));
+						} else { // if symbol not found
+							ans += DEREF_CHAR;
+							ans += variable; // adding command[i+1]
+						}
+						i++;
+					}
+				}
+				else { // if not a dereference
+					ans += command[i];
+				}
+			}
+			command = ans;
+		}
+	}
+    
     BuildFile::BuildFile() {
         // initialize member variables and default global variables here
-        set("$", {"$"});
-        set("test", 1025);
+//        set("$", {"$"});
+//        set("test", 1025);
     }
 
     void BuildFile::addBuildRule(const BuildRule& rule) {
@@ -49,6 +100,13 @@ namespace Beast {
         //     m_FileNames.insert(file);
         // }
     }
+	
+	void BuildFile::resolveBuildRules() {
+    	for(BuildRule& rule : m_BuildRules) {
+    		rule.resolveCommands(*this);
+    	}
+    }
+    
     const BuildRule* BuildFile::getRule(const std::string& output) const {
         auto index = m_Index.find(output);
         if (index != m_Index.end()) {
@@ -56,5 +114,4 @@ namespace Beast {
         }
         return nullptr;
     }
-
 }

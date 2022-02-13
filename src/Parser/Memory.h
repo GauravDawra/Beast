@@ -13,6 +13,7 @@ namespace Beast {
         using iterator = typename std::map<std::string, MULTI_TYPE>::const_iterator;
         MULTI_TYPE get(const std::string& key) const;
         void set(const std::string& key, const MULTI_TYPE& value);
+        bool exists(const std::string& key) const;
         inline void clear() {
             m_LookupTree.clear();
         }
@@ -85,6 +86,7 @@ namespace Beast {
         inline const std::vector<std::string>& getCommands() const {
             return m_Commands;
         }
+        void resolveCommands(const SymbolTable& baseTable);
     private:
         std::string m_OutputTarget;
         std::vector<std::string> m_InputTargets;
@@ -94,11 +96,12 @@ namespace Beast {
     class BuildFile : public SymbolTable {
     public:
         BuildFile();
-        void addBuildRule(const BuildRule& rule);
-        inline const std::vector<BuildRule>& getRules() const {
+	    void addBuildRule(const BuildRule& rule);
+	    void resolveBuildRules();
+	    inline const std::vector<BuildRule>& getRules() const {
             return m_BuildRules;
         }
-        const BuildRule* getRule(const std::string& output) const;
+	    const BuildRule* getRule(const std::string& output) const;
     private:
         std::vector<BuildRule> m_BuildRules;
         std::map<std::string, int> m_Index;

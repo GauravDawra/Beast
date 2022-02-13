@@ -1,4 +1,4 @@
-include_dirs = ../Parser ../FileDependency ../Logger ./
+include_dirs = ../Parser ../FileDependency ../Logger ./ ../../vendor/taskflow
 
 CC = g++-11
 FLAGS = -std=c++2a -fopenmp $(include_dirs:%=-I%)

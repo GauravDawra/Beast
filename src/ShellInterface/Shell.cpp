@@ -22,7 +22,7 @@ namespace Beast {
             output += buffer.data();
         }
         auto commandStatus = pclose(shellPipe);
-        exitStatus = commandStatus;
+	    exitStatus = commandStatus;
         return output;
     }
 
@@ -34,6 +34,7 @@ namespace Beast {
 		    jointCommand += (i == commands.size() - 1 ?
 		                     commands[i] : commands[i] + " && ");
 	    }
+	    
 	    return EXECUTE(jointCommand, exitStatus);
     }
 

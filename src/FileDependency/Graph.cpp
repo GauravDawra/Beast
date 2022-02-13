@@ -68,7 +68,7 @@ namespace Beast {
 
     void Graph::tillIndex(int index) {
         while (m_AdjacencyList.size() < index) {
-            m_AdjacencyList.push_back(std::vector<int>());
+            m_AdjacencyList.emplace_back();
         }
     }
 
@@ -93,4 +93,5 @@ namespace Beast {
             }
         }
     }
+ 
 }

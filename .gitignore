@@ -14,7 +14,7 @@ cmake-build-debug/
 .idea/
 
 # general
-beast.build
+beast.build1
 CMakeLists.txt
 TODO
 main

@@ -1,0 +1,10 @@
+
+build A : B C
+	abcdg = "hello1"
+	! for i in {1..10}; do echo $(abcdg) >> test.txt; done
+
+build B : Makefile
+	! for i in {1..10}; do echo $i >> test.txt; done
+
+build C : Makefile
+	! for i in {1..10}; do echo C >> test.txt; done

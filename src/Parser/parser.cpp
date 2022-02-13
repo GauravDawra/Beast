@@ -1478,4 +1478,5 @@ void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile) {
     std::cout << "Scanner and parser generated" << std::endl;
     parser.parse();
     yylex_destroy(scanner);
+    buildFile.resolveBuildRules();
 }
