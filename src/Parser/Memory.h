@@ -70,7 +70,7 @@ namespace Beast {
         inline void setCommands(const std::vector<std::string>& commands) {
 			LOG_DEBUG("setting commands for " + getOutputTarget());
             m_Commands = commands;
-            std::cout << m_Commands.size() << std::endl;
+            LOG_DEBUG( "Number of commands in " + getOutputTarget() + ": " + std::to_string(m_Commands.size()));
         }
 
         inline void setTable(const SymbolTable& table) {
