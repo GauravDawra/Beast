@@ -16,7 +16,7 @@ jobs:
       - name: make
         run: make MODE=RELEASE
 
-  release-debug:
+  debug-build:
 
     runs-on: ubuntu-latest
 
