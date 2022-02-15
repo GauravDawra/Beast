@@ -7,6 +7,8 @@
 #include <string>
 #include "scanner.h"
 #include "Memory.h"
+#include "Logger.h"
+#include "Error.h"
 extern "C" {
     int yywrap(yyscan_t yyscanner) { return 1; }
 };
@@ -44,7 +46,9 @@ static Beast::SymbolTable s_ScratchTable;
     YY_DECL;
 
     #define ERROR(a) error(a); YYERROR;
-    void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile="beast.build");
+	namespace Beast {
+    	void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile="beast.build");
+    }
 }
 
 %token DEF BUILD QUOTE SBRAC EBRAC COLON ASSIGN MULTIPLY ADD DIVIDE SUBTRACT ENDL TAB
@@ -76,28 +80,24 @@ static Beast::SymbolTable s_ScratchTable;
  
 stmts:
                             {;}
-    | stmts stmt            {std::cout << "STMT detected " << line_num << '\n';}
+    | stmts stmt            {LOG_DEBUG("STMT detected " + std::to_string(line_num));}
     ;
 
 stmt:
-      build_grp              {std::cout <<"reached here\n";}
+      build_grp              {;}
     | def_grp                {;}
     | assign_stmt ENDL       {buildFile.set($1.first, $1.second);}
     | ENDL
     ;
 
 build_grp:
-    build_head ENDL build_cmds      { 
-        std::cout << "BUILD detected"<<std::endl; 
+    build_head ENDL build_cmds      {
+        LOG_DEBUG("BUILD detected");
         $$.setDependencies($1.first, $1.second);
         $$.setCommands($3);
-        // std::cout << "YOYOYO  final build commands are:\n";
-        // for(std::string &s : $3)
-        //     std::cout << '\t' << s <<std::endl;
         $$.setTable(s_ScratchTable);
         buildFile.addBuildRule($$);
         s_ScratchTable.clear();
-        // buildFile = s_ScratchTable;
     }
     ;
 
@@ -107,7 +107,7 @@ build_head:
                 error("exactly one output file required");
             $$.first = $2 [0];
             $$.second = $4;
-            std::cout << "build head detected for " << $2 [0] << std::endl;
+            LOG_DEBUG("build head detected for " + $2 [0]);
         }
     ;
 
@@ -120,7 +120,7 @@ build_head_file_list:
     ;
 
 build_cmds:
-    | build_cmds TAB COMMAND     {$$ = $1; $$.push_back($3); std::cout << "build cmd detected: " << $3 << std::endl; }
+    | build_cmds TAB COMMAND     {$$ = $1; $$.push_back($3); }
     | build_cmds TAB func_call   {$$ = $1; $$.push_back($3); } // wrong for now... temporary
     | build_cmds TAB assign_stmt {$$ = $1; s_ScratchTable.set($3.first, $3.second);}
     | build_cmds ENDL
@@ -128,7 +128,7 @@ build_cmds:
     ;
 
 func_call:
-    WORD SBRAC EBRAC     {$$ = $1; std::cout << "Function call detected: " << $1 << std::endl;}                   
+    WORD SBRAC EBRAC     {$$ = $1; LOG_DEBUG("Function call detected: " + $1);}
     ;
 
 def_grp:
@@ -149,17 +149,17 @@ def_body:
 
 
 assign_stmt:
-      WORD ASSIGN expr        {$$ = {$1, $3}; std::cout << "assignment\n";}
+      WORD ASSIGN expr        {$$ = {$1, $3}; LOG_DEBUG( "assignment detected");}
     ;
 
 expr:
       WORD                          {if(s_ScratchTable.size()) $$ = s_ScratchTable.get($1); else $$ = buildFile.get($1);}
     | NUMBER                        {$$ = $1;}
     | STRING_LIT                    {$$ = $1;}
-    | expr ADD expr                 {$$ = add($1, $3); std::cout << "value is " <<$$<< std::endl;}
-    | expr MULTIPLY expr            {$$ = multiply($1, $3); std::cout << "value of multiply is: "<<$$<<std::endl;}
-    | expr DIVIDE expr              {$$ = divide($1, $3); std::cout << "value of divide is: "<<$$<<std::endl;}
-    | expr SUBTRACT expr            {$$ = subtract($1, $3); std::cout << "value of subtract is: "<<$$<<std::endl;}
+    | expr ADD expr                 {$$ = add($1, $3); LOG_DEBUG("value after addition is " + toString($$)); }
+    | expr MULTIPLY expr            {$$ = multiply($1, $3); LOG_DEBUG("value after multiplication is " + toString($$));}
+    | expr DIVIDE expr              {$$ = divide($1, $3); LOG_DEBUG("value after division is " + toString($$));}
+    | expr SUBTRACT expr            {$$ = subtract($1, $3); LOG_DEBUG("value after subtract is " + toString($$));}
     ; 
 
 /* int_expr:
@@ -181,8 +181,7 @@ str_expr:
 
 
 void Beast::Parser::error(const std::string& msg) {
-    std::cerr << "PARSE ERROR: " << msg <<" at "<<line_num << std::endl;
-    exit(-1);
+    RAISE_ERROR_AND_EXIT("PARSE ERROR: " + msg + " at " + std::to_string(line_num), -1);
 }
 
 #ifdef PARSER_TEST
@@ -206,7 +205,7 @@ int main() {
     return 0;
 }
 #endif
-
+namespace Beast {
 void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile) {
     yyscan_t scanner;
     yylex_init(&scanner);
@@ -215,16 +214,16 @@ void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile) {
         yyset_in(inputFile_pointer, scanner);
     }
     else{
-        std::cout << "couldn't open file\n";
-        exit(-1);
+        RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, -1);
     }
     Beast::Parser parser{scanner, buildFile};
     #if YYDEBUG == 1
-        std::cout << "DEBUGGING..." << std::endl;
+        LOG_DEBUG("DEBUGGING...");
         parser.set_debug_level(true);
     #endif
-    std::cout << "Scanner and parser generated" << std::endl;
+    LOG_DEBUG("Scanner and parser generated");
     parser.parse();
     yylex_destroy(scanner);
     buildFile.resolveBuildRules();
+}
 }

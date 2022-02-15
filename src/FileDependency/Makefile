@@ -1,5 +1,5 @@
 CC ?= g++
-include_dirs = ../Parser ./
+include_dirs = ../Logger ../Parser ./
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
 
 OBJ_DIR = ./bin_int

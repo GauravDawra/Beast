@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     auto t = std::chrono::high_resolution_clock::now();
 #endif
     Beast::BuildFile buildFile;
-    readBuildFile(buildFile);
+    Beast::readBuildFile(buildFile);
     Beast::FileSystem fileSystem(buildFile);
     LOG_DEBUG("File system built");
     

@@ -45,7 +45,7 @@
 #ifndef YY_YY_PARSER_HPP_INCLUDED
 # define YY_YY_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 30 "main.ypp"
+#line 32 "main.ypp"
 
     #include <vector>
     #include <iostream>
@@ -190,7 +190,7 @@
 # define YYDEBUG 0
 #endif
 
-#line 22 "main.ypp"
+#line 24 "main.ypp"
 namespace Beast {
 #line 196 "parser.hpp"
 
@@ -1572,22 +1572,24 @@ switch (yykind)
   };
 
 
-#line 22 "main.ypp"
+#line 24 "main.ypp"
 } // Beast
 #line 1578 "parser.hpp"
 
 
 // "%code provides" blocks.
-#line 41 "main.ypp"
+#line 43 "main.ypp"
 
     #define YY_DECL \
         int yylex(Beast::Parser::semantic_type *yylval, yyscan_t yyscanner)
     YY_DECL;
 
     #define ERROR(a) error(a); YYERROR;
-    void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile="beast.build");
+	namespace Beast {
+    	void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile="beast.build");
+    }
 
-#line 1591 "parser.hpp"
+#line 1593 "parser.hpp"
 
 
 #endif // !YY_YY_PARSER_HPP_INCLUDED
