@@ -1,10 +1,10 @@
 include_dirs = ../Parser ../FileDependency ../Logger ./ ../../vendor/taskflow
 
-CC = g++-11
-FLAGS = -std=c++2a -fopenmp $(include_dirs:%=-I%)
+CC ?= g++
+FLAGS = -std=c++2a -fopenmp $(include_dirs:%=-I%) $(DEFINES)
 OBJ_DIR = ./bin_int
 
-all: $(OBJ_DIR)/Shell.o $(OBJ_DIR)/Executor.o main
+all: $(OBJ_DIR)/Shell.o $(OBJ_DIR)/Executor.o ShellInterface.o
 
 CPP = Shell.cpp Executor.cpp
 OBJ = $(CPP:%.cpp=$(OBJ_DIR)/%.o)
@@ -18,10 +18,13 @@ $(OBJ_DIR)/Shell.o: Shell.cpp | $(OBJ_DIR)
 $(OBJ_DIR)/Executor.o: Executor.cpp | $(OBJ_DIR)
 	${CC} ${FLAGS} -c $< -MMD -o $@
 
-main: $(OBJ)
+ShellInterface.o: $(OBJ)
 	ld -r $(OBJ) -o ShellInterface.o
 
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
-.PHONY: main
+clean:
+	rm -rf $(OBJ_DIR) ShellInterface.o
+
+.PHONY: all clean

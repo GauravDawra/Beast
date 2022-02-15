@@ -62,7 +62,7 @@ namespace Beast::Builder {
 			if (rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
 				continue; // just move on
 			}
-			LOG_DEBUG(executing commands for file + file->name());
+			LOG_DEBUG("executing commands for file " + file->name());
 			std::cout << buildRule(*rule, exitStatus);
 			if (exitStatus) {
 				RAISE_ERROR("Problem in building rule \"" + rule->getOutputTarget() + "\"");

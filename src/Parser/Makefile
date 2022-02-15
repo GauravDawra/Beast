@@ -1,11 +1,11 @@
 
-CC = g++-11
+CC ?= g++
 include_dirs = ./ ../Logger
-FLAGS = -std=c++2a $(include_dirs:%=-I%)
+FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
 
 OBJ_DIR = ./bin_int
 
-all: scanner.cpp parser.cpp main $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o
+all: scanner.cpp parser.cpp main $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o libparser.a
 
 scanner.cpp: main.lpp
 	flex main.lpp
@@ -32,7 +32,7 @@ $(OBJ_DIR)/Memory.o : Memory.cpp | $(OBJ_DIR)
 $(OBJ_DIR)/variable_type.o : variable_type.cpp | $(OBJ_DIR)
 	${CC} ${FLAGS} -c $< -MMD -o $@
 
-main: $(OBJ) #$(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/variable_type.o
+libparser.a: $(OBJ) #$(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/variable_type.o
 	ar cr libparser.a $(OBJ)	# to make static library
 # 	ld -r $(OBJ) -o main.o	# to link into one object file
 #	g++-11 $(FLAGS) -shared -fpic $(OBJ) -o libsparser.dylib -Wl,-install_name,@rpath/libsparser.dylib
@@ -56,7 +56,7 @@ test_parser:
 test: test.cpp
 	${CC} -std=c++2a test.cpp -o ./build/test && ./build/test
 
-# clean:
-# 	rm $(OBJ)
+clean:
+	rm -rf $(OBJ_DIR) libparser.a
 
-#!/bin/sh
+.PHONY: all clean

@@ -35,7 +35,6 @@ int main(int argc, char* argv[]) {
     auto duration = t2 - t;
     std::cout << (duration.count() / 1000.0f) <<" us" << std::endl;
 #endif
-    std::cout << "Done " << std::endl;
     return 0;
 }
 // for static lib: g++-11 -std=c++2a main.cpp src/Filesystem.cpp -Isrc/ -Isrc/Parser  -lparser -L./src/Parser/ -o main
