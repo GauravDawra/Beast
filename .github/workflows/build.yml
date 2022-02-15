@@ -6,12 +6,8 @@ on:
   pull_request:
     branches: [ master ]
 
-strategy:
-  matrix:
-    compiler: [g++-11]
-
 env:
-  CC = {{ matrix.compiler }}
+  CC = g++-10
 
 jobs:
   release-build:
