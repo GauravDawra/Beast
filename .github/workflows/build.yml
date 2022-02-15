@@ -12,7 +12,7 @@ env:
 jobs:
   release-build:
 
-    runs-on: macos-latest
+    runs-on: [macos-latest, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v2
@@ -21,11 +21,11 @@ jobs:
       - name: make
         run: make MODE=RELEASE
 
-  debug-build:
-
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: make
-        run: make MODE=DEBUG
+#  debug-build:
+#
+#    runs-on: macos-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: make
+#        run: make MODE=DEBUG

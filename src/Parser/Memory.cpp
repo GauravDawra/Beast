@@ -79,8 +79,7 @@ namespace Beast {
     
     BuildFile::BuildFile() {
         // initialize member variables and default global variables here
-//        set("$", {"$"});
-//        set("test", 1025);
+        set("$", "$"); // to allow escaping $ character
     }
 
     void BuildFile::addBuildRule(const BuildRule& rule) {
