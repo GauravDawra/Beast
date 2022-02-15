@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  CC = g++-10
+  CC : g++-10
 
 jobs:
   release-build:
