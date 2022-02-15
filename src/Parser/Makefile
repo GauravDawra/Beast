@@ -5,7 +5,7 @@ FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
 
 OBJ_DIR = ./bin_int
 
-all: scanner.cpp parser.cpp main $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o libparser.a
+all: scanner.cpp parser.cpp $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o libparser.a
 
 scanner.cpp: main.lpp
 	flex main.lpp
