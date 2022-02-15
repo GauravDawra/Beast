@@ -6,6 +6,7 @@
 // same file has been given away with with multiple names
 
 #include "Filesystem.h"
+#include <chrono>
 
 namespace Beast {
     File::File(const std::string& file) : m_Name(file), m_Path(file) {
