@@ -1,6 +1,6 @@
 CC ?= g++
 include_dirs = ../FileDependency ../ShellInterface ../Parser ./ ../../vendor/taskflow ../Logger
-FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
+FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 
 OBJ_DIR = ./bin_int
 CPP := TaskScheduler.cpp
