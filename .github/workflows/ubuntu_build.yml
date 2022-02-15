@@ -1,0 +1,31 @@
+name: Ubuntu Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CC : g++-10
+
+jobs:
+  release-build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: make
+        run: make MODE=RELEASE
+
+#  debug-build:
+#
+#    runs-on: macos-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: make
+#        run: make MODE=DEBUG
