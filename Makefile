@@ -3,7 +3,7 @@ include_dirs := src/Parser src/FileDependency src/ShellInterface src/Logger src/
 VENDOR = vendor/
 export VENDOR
 
-CC = g++
+CC ?= g++
 
 ifeq ("$(MODE)", "DEBUG")
 DEFINES += -DBEAST_DEBUG

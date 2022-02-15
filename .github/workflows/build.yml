@@ -6,10 +6,17 @@ on:
   pull_request:
     branches: [ master ]
 
+strategy:
+  matrix:
+    compiler: [g++-11]
+
+env:
+  CC = {{ matrix.compiler }}
+
 jobs:
   release-build:
 
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -18,7 +25,7 @@ jobs:
 
   debug-build:
 
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
