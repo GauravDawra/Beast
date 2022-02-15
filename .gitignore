@@ -3,11 +3,13 @@ src/FileDependency/bin_int
 src/Logger/bin_int
 src/Parser/bin_int
 src/ShellInterface/bin_int
+src/Parallelizer/bin_int
 
 src/FileDependency/*.o
 src/Logger/*.o
 src/Parser/*.o
 src/ShellInterface/*.o
+src/Parallelizer/*.o
 
 # ide-generated scratch files/folders
 cmake-build-debug/
