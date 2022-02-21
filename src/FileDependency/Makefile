@@ -2,6 +2,10 @@ CC ?= g++
 include_dirs = ../Logger ../Parser ./
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
 
+ifeq ("$(MODE)", "RELEASE")
+FLAGS += -O3
+endif
+
 OBJ_DIR = ./bin_int
 CPP := Filesystem.cpp Graph.cpp
 OBJ = $(CPP:%.cpp=$(OBJ_DIR)/%.o)

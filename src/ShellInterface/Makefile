@@ -2,6 +2,11 @@ include_dirs = ../Parser ../FileDependency ../Logger ./ ../../vendor/taskflow
 
 CC ?= g++
 FLAGS = -std=c++2a -fopenmp $(include_dirs:%=-I%) $(DEFINES)
+
+ifeq ("$(MODE)", "RELEASE")
+FLAGS += -O3
+endif
+
 OBJ_DIR = ./bin_int
 
 all: $(OBJ_DIR)/Shell.o $(OBJ_DIR)/Executor.o ShellInterface.o

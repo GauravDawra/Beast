@@ -3,6 +3,10 @@ CC ?= g++
 include_dirs = ./ ../Logger
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
 
+ifeq ("$(MODE)", "RELEASE")
+FLAGS += -O3
+endif
+
 OBJ_DIR = ./bin_int
 
 all: scanner.cpp parser.cpp $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o parser.o

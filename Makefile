@@ -9,13 +9,15 @@ ifeq ("$(MODE)", "DEBUG")
 DEFINES += -DBEAST_DEBUG
 else
 DEFINES += -DBEAST_RELEASE
+FLAGS += -O3
 endif
 
-FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
+FLAGS += -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 SUBDIRS := src/Logger src/Parser src/FileDependency src/ShellInterface src/Parallelizer
 
 export CC
 export DEFINES
+export MODE
 #export FLAGS
 
 all: $(SUBDIRS) main

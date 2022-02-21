@@ -31,10 +31,19 @@ namespace Beast {
     void BuildRule::addCommand(const std::string& command) {
         m_Commands.push_back(command);
     }
-	
+    
+	void BuildRule::setDependencies(const std::string &output, const std::vector<std::string> &inputs) {
+		m_OutputTarget = output;
+		m_InputTargets = inputs;
+		set("out", output);
+		for (int i = 1; i <= inputs.size(); i++) {
+			set(std::to_string(i), inputs[i-1]);
+		}
+    }
+    
 	void BuildRule::resolveCommands(const SymbolTable &baseTable) {
     	static char DEREF_CHAR = '$'; // character used for dereferencing in commands
-		for (std::string& command : m_Commands) {
+    	for (std::string& command : m_Commands) {
 			std::string ans;
 			for(int i=0;i<command.length();i++) {
 				if(command[i] == DEREF_CHAR) {
@@ -80,10 +89,10 @@ namespace Beast {
     BuildFile::BuildFile() {
         // initialize member variables and default global variables here
         set("$", "$"); // to allow escaping $ character
+//        set("currentDir", ) // set currentDir later
     }
 
     void BuildFile::addBuildRule(const BuildRule& rule) {
-        // std::cout << "Adding build Rule for : " << rule.getOutputTarget() << std::endl;
         std::string output = rule.getOutputTarget();
         if (m_Index.find(output) == m_Index.end()) {
             m_Index[output] = m_Index.size();
@@ -93,11 +102,6 @@ namespace Beast {
         	// might change later to concatenate two buildRules like in Make
 	        RAISE_ERROR_AND_EXIT("multiple build rules for " + output, -1);
         }
-        // std::cout << m_BuildRules.size() << std::endl;
-        // m_FileNames.insert(rule.getOutputTarget());
-        // for (const std::string& file : rule.m_InputTargets) {
-        //     m_FileNames.insert(file);
-        // }
     }
 	
 	void BuildFile::resolveBuildRules() {

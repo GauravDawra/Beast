@@ -62,11 +62,7 @@ namespace Beast {
     class BuildRule : public SymbolTable {
     public:
         void addCommand(const std::string& command);
-        // BuildRule() = delete;
-        inline void setDependencies(const std::string& output, const std::vector<std::string>& inputs) {
-            m_OutputTarget = output;
-            m_InputTargets = inputs;
-        }
+        void setDependencies(const std::string& output, const std::vector<std::string>& inputs);
         inline void setCommands(const std::vector<std::string>& commands) {
 			LOG_DEBUG("setting commands for " + getOutputTarget());
             m_Commands = commands;

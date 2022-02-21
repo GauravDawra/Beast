@@ -40,7 +40,7 @@
 #line 1 "main.ypp"
 
 
-//g++-11 lex.yy.cpp main.tab.cpp -D__EXTERN_C__ -ly -ll -o main
+// g++-11 lex.yy.cpp main.tab.cpp -D__EXTERN_C__ -ly -ll -o main
 // g++-11 lex.yy.cc parser.cpp -o main -lfl -I/opt/homebrew/opt/flex/include -L/opt/homebrew/opt/flex/lib
 // #include <iostream>
 // #include <vector>
@@ -887,9 +887,9 @@ namespace Beast {
 #line 94 "main.ypp"
                                     {
         LOG_DEBUG("BUILD detected");
+        yylhs.value.as < Beast::BuildRule > ().setTable(s_ScratchTable);
         yylhs.value.as < Beast::BuildRule > ().setDependencies(yystack_[2].value.as < io_dependancy > ().first, yystack_[2].value.as < io_dependancy > ().second);
         yylhs.value.as < Beast::BuildRule > ().setCommands(yystack_[0].value.as < string_list > ());
-        yylhs.value.as < Beast::BuildRule > ().setTable(s_ScratchTable);
         buildFile.addBuildRule(yylhs.value.as < Beast::BuildRule > ());
         s_ScratchTable.clear();
     }
@@ -910,7 +910,7 @@ namespace Beast {
 
   case 11: // build_head_file_list: WORD
 #line 115 "main.ypp"
-                                         {yylhs.value.as < string_list > ().push_back(yystack_[0].value.as < std::string > ());}
+                                        {yylhs.value.as < string_list > ().push_back(yystack_[0].value.as < std::string > ());}
 #line 915 "parser.cpp"
     break;
 

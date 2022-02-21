@@ -2,6 +2,10 @@ CC ?= g++
 include_dirs = ./
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
 
+ifeq ("$(MODE)", "RELEASE")
+FLAGS += -O3
+endif
+
 OBJ_DIR = ./bin_int
 CPP := Logger.cpp Error.cpp
 OBJ = $(CPP:%.cpp=$(OBJ_DIR)/%.o)

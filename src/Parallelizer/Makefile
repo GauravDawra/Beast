@@ -2,6 +2,10 @@ CC ?= g++
 include_dirs = ../FileDependency ../ShellInterface ../Parser ./ ../../vendor/taskflow ../Logger
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 
+ifeq ("$(MODE)", "RELEASE")
+FLAGS += -O3
+endif
+
 OBJ_DIR = ./bin_int
 CPP := TaskScheduler.cpp
 OBJ = $(CPP:%.cpp=$(OBJ_DIR)/%.o)

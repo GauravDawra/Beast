@@ -1,6 +1,6 @@
 %{
 
-//g++-11 lex.yy.cpp main.tab.cpp -D__EXTERN_C__ -ly -ll -o main
+// g++-11 lex.yy.cpp main.tab.cpp -D__EXTERN_C__ -ly -ll -o main
 // g++-11 lex.yy.cc parser.cpp -o main -lfl -I/opt/homebrew/opt/flex/include -L/opt/homebrew/opt/flex/lib
 // #include <iostream>
 // #include <vector>
@@ -93,9 +93,9 @@ stmt:
 build_grp:
     build_head ENDL build_cmds      {
         LOG_DEBUG("BUILD detected");
+        $$.setTable(s_ScratchTable);
         $$.setDependencies($1.first, $1.second);
         $$.setCommands($3);
-        $$.setTable(s_ScratchTable);
         buildFile.addBuildRule($$);
         s_ScratchTable.clear();
     }
@@ -112,7 +112,7 @@ build_head:
     ;
 
 build_head_file_list:
-    |  WORD                              {$$.push_back($1);} // no empty rule...
+    | WORD                              {$$.push_back($1);} // no empty rule...
     | FILENAME                          {$$.push_back($1);} // to avoid empty lists
     | build_head_file_list FILENAME     {$$ = $1; $$.push_back($2);}
     | build_head_file_list WORD         {$$ = $1; $$.push_back($2);}

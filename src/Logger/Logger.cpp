@@ -3,13 +3,15 @@
 //
 
 #include "Logger.h"
+#include <sstream>
 
 namespace Beast {
 	const std::string Logger::m_HeadPrefix = "beast";
 	
-//	template<typename T>
 	void Logger::log(const std::string& msg, LogLevel level) {
-		std::cout << m_HeadPrefix << ": " << getPrefixOfLevel(level) << ": " << msg << std::endl;
+		std::stringstream ss; // to
+		ss << m_HeadPrefix << ": " << getPrefixOfLevel(level) << ": " << msg << std::endl;
+		std::cout << ss.str();
 	}
 	
 	std::string Logger::getPrefixOfLevel(Logger::LogLevel level) {
