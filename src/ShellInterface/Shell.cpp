@@ -10,12 +10,11 @@
 namespace Beast {
 
     std::string executeCommand(const std::string &command, int &exitStatus) {
+    	LOG_INFO(command);
         std::array<char, 128> buffer;
         std::string output;
         auto shellPipe = popen(command.c_str(), "r");
         if (!shellPipe) {
-//            std::cout << "error running command" << std::endl;
-//            exit(-1);
 			RAISE_ERROR_AND_EXIT("connection to shell could not be established", 0);
         }
         while (fgets(buffer.data(), buffer.size(), shellPipe) != nullptr) {
@@ -28,7 +27,6 @@ namespace Beast {
 
     std::string executeCommands(const std::vector<std::string> &commands, int &exitStatus) {
 	    std::string jointCommand = "";
-//	    std::cout << "I am in execute Commands" << std::endl;
 	    for (int i = 0; i < commands.size(); i++) {
 		    // joining the commands using && so that they return on a single failure
 		    jointCommand += (i == commands.size() - 1 ?

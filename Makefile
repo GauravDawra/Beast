@@ -1,4 +1,4 @@
-include_dirs := src/Parser src/FileDependency src/ShellInterface src/Logger src/Parallelizer src/ vendor/taskflow
+include_dirs := src/Parser src/FileDependency src/ShellInterface src/Logger src/Parallelizer src/ vendor/taskflow vendor/cxxopts/include
 
 VENDOR = vendor/
 export VENDOR

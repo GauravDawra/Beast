@@ -1,3 +1,6 @@
 [submodule "vendor/taskflow"]
 	path = vendor/taskflow
 	url = https://github.com/GauravDawra/taskflow
+[submodule "vendor/cxxopts"]
+	path = vendor/cxxopts
+	url = https://github.com/GauravDawra/cxxopts

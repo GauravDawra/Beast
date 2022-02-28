@@ -1,6 +1,6 @@
 CC ?= g++
 include_dirs = ./
-FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES)
+FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 
 ifeq ("$(MODE)", "RELEASE")
 FLAGS += -O3

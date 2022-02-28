@@ -23,3 +23,4 @@ CMakeLists.txt
 TODO
 main
 test.cpp
+test.sh

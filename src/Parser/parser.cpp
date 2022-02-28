@@ -1000,7 +1000,7 @@ namespace Beast {
 
   case 32: // expr: WORD
 #line 156 "main.ypp"
-                                    {if(s_ScratchTable.size()) yylhs.value.as < MULTI_TYPE > () = s_ScratchTable.get(yystack_[0].value.as < std::string > ()); else yylhs.value.as < MULTI_TYPE > () = buildFile.get(yystack_[0].value.as < std::string > ());}
+                                    {if(s_ScratchTable.exists(yystack_[0].value.as < std::string > ())) yylhs.value.as < MULTI_TYPE > () = s_ScratchTable.get(yystack_[0].value.as < std::string > ()); else yylhs.value.as < MULTI_TYPE > () = buildFile.get(yystack_[0].value.as < std::string > ());}
 #line 1005 "parser.cpp"
     break;
 

@@ -4,9 +4,9 @@
 
 #include <stdlib.h>
 #include "Executor.h"
-//#include <omp.h> // bye bye omp for now :)
 #include "Logger.h"
 #include "Error.h"
+//#include <omp.h> // bye bye omp for now :)
 namespace Beast::Builder {
 	
 	void setEnvironmentVariables(const SymbolTable &env) {
