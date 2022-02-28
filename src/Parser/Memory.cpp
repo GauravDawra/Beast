@@ -42,50 +42,54 @@ namespace Beast {
     }
     
 	void BuildRule::resolveCommands(const SymbolTable &baseTable) {
-    	static char DEREF_CHAR = '$'; // character used for dereferencing in commands
     	for (std::string& command : m_Commands) {
-			std::string ans;
-			for(int i=0;i<command.length();i++) {
-				if(command[i] == DEREF_CHAR) {
-					if(i + 1 == command.length()) break;
-					if (command[i+1] == '(') {
-						int j = i;
-						while(j < command.length() and command[j] != ')')
-							j++;
-						if (j == command.length()){
-							RAISE_ERROR_AND_EXIT("irregular dereference in command - " + command, -1);
-						}
-						std::string variable = command.substr(i+2, j-(i+2));
-						if(exists(variable)) {
-							ans += toString(get(variable));
-						} else if(baseTable.exists(variable)) {
-							ans += toString(baseTable.get(variable));
-						} else {
-							ans += command.substr(i, j-i+1); // let it be in the dereference form
-						}
-						i = j;
+		    resolveCommand(baseTable, command);
+	    }
+	}
+	
+	void BuildRule::resolveCommand(const SymbolTable& baseTable, std::string& command) {
+		static char DEREF_CHAR = '$'; // character used for dereferencing in commands
+		std::string ans;
+		for(int i=0;i<command.length();i++) {
+			if(command[i] == DEREF_CHAR) {
+				if(i + 1 == command.length()) break;
+				if (command[i+1] == '(') {
+					int j = i;
+					while(j < command.length() and command[j] != ')')
+						j++;
+					if (j == command.length()){
+						RAISE_ERROR_AND_EXIT("irregular dereference in command - " + command, -1);
 					}
-					else { // single letter dereference
-						std::string variable = std::string(1, command[i+1]);
-						if(exists(variable)) {
-							ans += toString(get(variable));
-						} else if(baseTable.exists(variable)) {
-							ans += toString(baseTable.get(variable));
-						} else { // if symbol not found
-							ans += DEREF_CHAR;
-							ans += variable; // adding command[i+1]
-						}
-						i++;
+					std::string variable = command.substr(i+2, j-(i+2));
+					if(exists(variable)) {
+						ans += toString(get(variable));
+					} else if(baseTable.exists(variable)) {
+						ans += toString(baseTable.get(variable));
+					} else {
+						ans += command.substr(i, j-i+1); // let it be in the dereference form
 					}
+					i = j;
 				}
-				else { // if not a dereference
-					ans += command[i];
+				else { // single letter dereference
+					std::string variable = std::string(1, command[i+1]);
+					if(exists(variable)) {
+						ans += toString(get(variable));
+					} else if(baseTable.exists(variable)) {
+						ans += toString(baseTable.get(variable));
+					} else { // if symbol not found
+						ans += DEREF_CHAR;
+						ans += variable; // adding command[i+1]
+					}
+					i++;
 				}
 			}
-			command = ans;
+			else { // if not a dereference
+				ans += command[i];
+			}
 		}
-	}
-    
+		command = ans;
+    }
+	
     BuildFile::BuildFile() {
         // initialize member variables and default global variables here
         set("$", "$"); // to allow escaping $ character

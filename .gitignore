@@ -13,6 +13,8 @@ src/Parallelizer/*.o
 
 # ide-generated scratch files/folders
 cmake-build-debug/
+cmake-build-release/
+build/
 .idea/
 
 # general
@@ -24,3 +26,4 @@ TODO
 main
 test.cpp
 test.sh
+beast

@@ -85,9 +85,10 @@ namespace Beast {
         }
         void resolveCommands(const SymbolTable& baseTable);
     private:
-        std::string m_OutputTarget;
-        std::vector<std::string> m_InputTargets;
-        std::vector<std::string> m_Commands;
+	    std::string m_OutputTarget;
+	    std::vector<std::string> m_InputTargets;
+	    std::vector<std::string> m_Commands;
+	    void resolveCommand(const SymbolTable& baseTable, std::string& command);
     };
     
     class BuildFile : public SymbolTable {
@@ -102,8 +103,6 @@ namespace Beast {
     private:
         std::vector<BuildRule> m_BuildRules;
         std::map<std::string, int> m_Index;
-        // std::vector<int> m_Index;
-        // std::set<std::string> m_FileNames;
     };
 
     // class Function {

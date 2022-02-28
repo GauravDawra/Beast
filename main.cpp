@@ -26,12 +26,19 @@ int main(int argc, char* argv[]) {
 	cxxopts::Options CLIoptions(argv[0]);
 	CLIoptions.add_options()
 		("j,threads", "number of working threads", cxxopts::value<signed short>(numThreads)->default_value("1"))
-		("d,directory", "directory containing build file", cxxopts::value<std::string>(buildFileDirectory)->default_value(""));
+		("d,directory", "directory containing build file", cxxopts::value<std::string>(buildFileDirectory)->default_value(""))
+		("h,help", "print help");
 	
+	cxxopts::ParseResult result;
 	try {
-		auto result = CLIoptions.parse(argc, argv);
+		result = CLIoptions.parse(argc, argv);
 	} catch(const cxxopts::OptionException& e) {
 		Beast::RAISE_ERROR_AND_EXIT(e.what(), -1);
+	}
+	
+	if (result.count("help")) { // print help
+		std::cout << CLIoptions.help() << std::endl;
+		exit(0);
 	}
 	
 	LOG_DEBUG("Number of threads: " + std::to_string(numThreads));
@@ -52,6 +59,7 @@ int main(int argc, char* argv[]) {
     }
     else {
 	    Beast::Parallelizer::TaskScheduler(buildFile, fileSystem).run(numThreads);
+	    LOG_DEBUG("Parallel build complete")
     }
     
 #ifdef BEAST_DEBUG
@@ -61,6 +69,3 @@ int main(int argc, char* argv[]) {
 #endif
     return 0;
 }
-
-// for static lib: g++-11 -std=c++2a main.cpp src/Filesystem.cpp -Isrc/ -Isrc/Parser  -lparser -L./src/Parser/ -o main
-// for shared: g++-11 -std=c++2a main.cpp src/Filesystem.cpp -Isrc/ -Isrc/Parser  -lsparser -L./src/Parser/ -o main -rpath ./src/Parser/

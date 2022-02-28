@@ -1,5 +1,5 @@
 include_dirs := src/Parser src/FileDependency src/ShellInterface src/Logger src/Parallelizer src/ vendor/taskflow vendor/cxxopts/include
-
+TARGET = beast
 VENDOR = vendor/
 export VENDOR
 
@@ -20,24 +20,24 @@ export DEFINES
 export MODE
 #export FLAGS
 
-all: $(SUBDIRS) main
+all: $(SUBDIRS) $(TARGET)
 
 $(SUBDIRS):
 	make -C $@
 
-main: main.cpp src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o
-	$(CC) $(FLAGS) src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o main.cpp -o ./main
+$(TARGET): main.cpp src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o
+	$(CC) $(FLAGS) src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o main.cpp -o $(TARGET)
 #	./main < ./src/Parser/beast.build
 # 	src/Parser/variable_type.cpp src/Parser/scanner.cpp src/Parser/parser.cpp src/Parser/Memory.cpp
 
-run: | main
-	./main
+run: | $(TARGET)
+	./$(TARGET)
 
 clean:
 #	$(MAKE) clean $(SUBDIRS:%=-C %)
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
   	done
-	rm main
+	rm $(TARGET)
 
 .PHONY: all $(SUBDIRS) run
