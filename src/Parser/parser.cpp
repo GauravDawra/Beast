@@ -1457,25 +1457,26 @@ int main() {
     return 0;
 }
 #endif
+
 namespace Beast {
-void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile) {
-    yyscan_t scanner;
-    yylex_init(&scanner);
-    FILE* inputFile_pointer = fopen(inputFile.c_str(), "r");
-    if (inputFile_pointer){
-        yyset_in(inputFile_pointer, scanner);
-    }
-    else{
-        RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, -1);
-    }
-    Beast::Parser parser{scanner, buildFile};
-    #if YYDEBUG == 1
-        LOG_DEBUG("DEBUGGING...");
-        parser.set_debug_level(true);
-    #endif
-    LOG_DEBUG("Scanner and parser generated");
-    parser.parse();
-    yylex_destroy(scanner);
-    buildFile.resolveBuildRules();
-}
+	void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile) {
+		yyscan_t scanner;
+		yylex_init(&scanner);
+		FILE* inputFile_pointer = fopen(inputFile.c_str(), "r");
+		if (inputFile_pointer){
+			yyset_in(inputFile_pointer, scanner);
+		}
+		else{
+			RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, -1);
+		}
+		Beast::Parser parser{scanner, buildFile};
+		#if YYDEBUG == 1
+			LOG_DEBUG("DEBUGGING...");
+			parser.set_debug_level(true);
+		#endif
+		LOG_DEBUG("Scanner and parser generated");
+		parser.parse();
+		yylex_destroy(scanner);
+		buildFile.resolveBuildRules();
+	}
 }

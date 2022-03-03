@@ -40,4 +40,7 @@ clean:
   	done
 	rm $(TARGET)
 
-.PHONY: all $(SUBDIRS) run
+install: $(TARGET)
+	sudo install $(TARGET) /usr/local/bin
+
+.PHONY: all $(SUBDIRS) run install
