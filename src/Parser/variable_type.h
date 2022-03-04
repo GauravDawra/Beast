@@ -16,7 +16,7 @@ enum type {
     STRING
 };
 
-#define MULTI_TYPE std::variant<int, std::string>
+#define MULTI_TYPE std::variant<int32_t, std::string>
 
 // #define CHECK_TYPE(a, b) if(a.index() != b.index()) \
 //     throw std::runtime_error("wrong type of variables");

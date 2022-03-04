@@ -16,10 +16,10 @@ all: $(OBJ_DIR)/Filesystem.o $(OBJ_DIR)/Graph.o fileDependency.o
 -include $(DEP)
 
 $(OBJ_DIR)/Graph.o: Graph.cpp | $(OBJ_DIR)
-	$(CC) $(FLAGS) -c -MMD $< -o $@
+	$(CXX) $(FLAGS) -c -MMD $< -o $@
 
 $(OBJ_DIR)/Filesystem.o: Filesystem.cpp | $(OBJ_DIR)
-	$(CC) $(FLAGS) -c -MMD $< -o $@
+	$(CXX) $(FLAGS) -c -MMD $< -o $@
 
 fileDependency.o: $(OBJ)
 	ld -r $(OBJ) -o fileDependency.o

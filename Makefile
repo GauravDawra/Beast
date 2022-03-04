@@ -15,7 +15,7 @@ endif
 FLAGS += -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 SUBDIRS := src/Logger src/Parser src/FileDependency src/ShellInterface src/Parallelizer
 
-export CC
+export CXX
 export DEFINES
 export MODE
 #export FLAGS
@@ -26,7 +26,7 @@ $(SUBDIRS):
 	make -C $@
 
 $(TARGET): main.cpp src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o
-	$(CC) $(FLAGS) src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o main.cpp -o $(TARGET)
+	$(CXX) $(FLAGS) src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o main.cpp -o $(TARGET)
 #	./main < ./src/Parser/beast.build
 # 	src/Parser/variable_type.cpp src/Parser/scanner.cpp src/Parser/parser.cpp src/Parser/Memory.cpp
 

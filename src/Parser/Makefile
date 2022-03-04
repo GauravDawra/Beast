@@ -1,5 +1,5 @@
 
-CC ?= g++
+CXX ?= g++
 include_dirs = ./ ../Logger
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 
@@ -25,16 +25,16 @@ DEP = $(OBJ:%.o=%.d)
 -include $(DEP)
 
 $(OBJ_DIR)/parser.o : parser.cpp | $(OBJ_DIR)
-	${CC} ${FLAGS} -c $< -MMD -o $@
+	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 $(OBJ_DIR)/scanner.o : scanner.cpp | $(OBJ_DIR)
-	${CC} ${FLAGS} -c $< -MMD -o $@
+	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 $(OBJ_DIR)/Memory.o : Memory.cpp | $(OBJ_DIR)
-	${CC} ${FLAGS} -c $< -MMD -o $@
+	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 $(OBJ_DIR)/variable_type.o : variable_type.cpp | $(OBJ_DIR)
-	${CC} ${FLAGS} -c $< -MMD -o $@
+	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 parser.o: $(OBJ) #$(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/variable_type.o
 	ld -r $(OBJ) -o parser.o	# to link into one object file
@@ -55,10 +55,10 @@ $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
 test_parser:
-	${CC} ${FLAGS} $(OBJ_DIR)/variable_type.o scanner.cpp parser.cpp Memory.cpp -DPARSER_TEST -o ./build/main
+	${CXX} ${FLAGS} $(OBJ_DIR)/variable_type.o scanner.cpp parser.cpp Memory.cpp -DPARSER_TEST -o ./build/main
 
 test: test.cpp
-	${CC} -std=c++2a test.cpp -o ./build/test && ./build/test
+	${CXX} -std=c++2a test.cpp -o ./build/test && ./build/test
 
 clean:
 	rm -rf $(OBJ_DIR) parser.o

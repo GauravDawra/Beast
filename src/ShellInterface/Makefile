@@ -1,7 +1,7 @@
 include_dirs = ../Parser ../FileDependency ../Logger ./ ../../vendor/taskflow
 
-CC ?= g++
-FLAGS = -std=c++2a -fopenmp $(include_dirs:%=-I%) $(DEFINES) -pthread
+CXX ?= g++
+FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 
 ifeq ("$(MODE)", "RELEASE")
 FLAGS += -O3
@@ -18,10 +18,10 @@ DEP = $(OBJ:%.o=%.d)
 -include $(DEP)
 
 $(OBJ_DIR)/Shell.o: Shell.cpp | $(OBJ_DIR)
-	${CC} ${FLAGS} -c $< -MMD -o $@
+	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 $(OBJ_DIR)/Executor.o: Executor.cpp | $(OBJ_DIR)
-	${CC} ${FLAGS} -c $< -MMD -o $@
+	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 ShellInterface.o: $(OBJ)
 	ld -r $(OBJ) -o ShellInterface.o

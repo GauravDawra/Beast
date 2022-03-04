@@ -1,4 +1,4 @@
-CC ?= g++
+CXX ?= g++
 include_dirs = ../FileDependency ../ShellInterface ../Parser ./ ../../vendor/taskflow ../Logger
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 
@@ -16,7 +16,7 @@ all: $(OBJ_DIR)/TaskScheduler.o TaskScheduler.o
 -include $(DEP)
 
 $(OBJ_DIR)/TaskScheduler.o: TaskScheduler.cpp | $(OBJ_DIR)
-	$(CC) $(FLAGS) -c -MMD $< -o $@
+	$(CXX) $(FLAGS) -c -MMD $< -o $@
 
 TaskScheduler.o: $(OBJ)
 #	right now just moving the object from bin_int
