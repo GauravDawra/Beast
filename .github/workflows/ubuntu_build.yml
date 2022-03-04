@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  CC : g++-10
+
 jobs:
   release-build:
 
