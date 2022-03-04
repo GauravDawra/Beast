@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-
-
 jobs:
   release-build:
 
