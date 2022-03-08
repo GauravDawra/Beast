@@ -481,7 +481,7 @@ extern int yylex (yyscan_t yyscanner);
 #undef yyTABLES_NAME
 #endif
 
-#line 45 "main.lpp"
+#line 47 "main.lpp"
 
 
 #line 487 "scanner.h"

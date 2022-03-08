@@ -5,7 +5,6 @@
 #pragma once
 
 #include <string>
-#include <iostream>
 
 namespace Beast::Error {
 	void raiseError(const std::string& msg, int exitStatus = 0);

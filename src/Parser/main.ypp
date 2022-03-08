@@ -14,6 +14,7 @@ extern "C" {
 };
 
 extern "C" int line_num;
+
 static Beast::SymbolTable s_ScratchTable;
 static std::vector<std::string> s_ScratchBuildShellCommands;
 %}
@@ -29,12 +30,14 @@ static std::vector<std::string> s_ScratchBuildShellCommands;
 
 %defines "parser.hpp"
 %output "parser.cpp"
-
+%locations
+%define api.location.type {location}
 %code requires {
     #include <vector>
     #include <iostream>
     #include "variable_type.h"
     #include "Memory.h"
+    #include "location.hh"
 
     using string_list = typename std::vector<std::string>;
     using io_dependancy = typename std::pair<std::string, std::vector<std::string> >;
@@ -43,7 +46,7 @@ static std::vector<std::string> s_ScratchBuildShellCommands;
 
 %code provides {
     #define YY_DECL \
-        int yylex(Beast::Parser::semantic_type *yylval, yyscan_t yyscanner)
+        int yylex(Beast::Parser::semantic_type *yylval, Beast::Parser::location_type* loc, yyscan_t yyscanner)
     YY_DECL;
 
     #define ERROR(a) error(a); YYERROR;
@@ -76,7 +79,7 @@ static std::vector<std::string> s_ScratchBuildShellCommands;
 %left               MULTIPLY DIVIDE
 
 %parse-param {Beast::BuildFile& buildFile}
-
+%parse-param {Beast::Parser::location_type& loc}
 %%
  
 stmts:
@@ -100,16 +103,18 @@ build_grp:
         buildFile.addBuildRule($$);
         s_ScratchTable.clear();
         s_ScratchBuildShellCommands.clear();
+        @$ = @1;
     }
     ;
 
 build_head:
     BUILD build_head_file_list COLON build_head_file_list {
             if ($2.size() != 1) 
-                error("exactly one output file required");
+                error(@2, "exactly one output target is required");
             $$.first = $2 [0];
             $$.second = $4;
             LOG_DEBUG("build head detected for " + $2 [0]);
+            @$ = @1;
         }
     ;
 
@@ -182,8 +187,9 @@ str_expr:
 %%
 
 
-void Beast::Parser::error(const std::string& msg) {
-    RAISE_ERROR_AND_EXIT("PARSE ERROR: " + msg + " at " + std::to_string(line_num), -1);
+void Beast::Parser::error(const location_type& loc, const std::string& msg) {
+	//std::cout << loc.begin.line << std::endl;
+    RAISE_ERROR_AND_EXIT("parse error at line " + std::to_string(loc.begin.line) + ": " + msg, -1);
 }
 
 #ifdef PARSER_TEST
@@ -212,6 +218,7 @@ namespace Beast {
 	void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile) {
 		yyscan_t scanner;
 		yylex_init(&scanner);
+		Parser::location_type loc;
 		FILE* inputFile_pointer = fopen(inputFile.c_str(), "r");
 		if (inputFile_pointer){
 			yyset_in(inputFile_pointer, scanner);
@@ -219,7 +226,7 @@ namespace Beast {
 		else{
 			RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, -1);
 		}
-		Beast::Parser parser{scanner, buildFile};
+		Beast::Parser parser{scanner, buildFile, loc};
 		#if YYDEBUG == 1
 			LOG_DEBUG("DEBUGGING...");
 			parser.set_debug_level(true);

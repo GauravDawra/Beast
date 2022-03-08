@@ -4,29 +4,30 @@
 
 #include "Logger.h"
 #include <sstream>
+#include <iostream>
 
 namespace Beast {
 	const std::string Logger::m_HeadPrefix = "beast";
 	
 	void Logger::log(const std::string& msg, LogLevel level) {
 		std::stringstream ss; // to
-		ss << m_HeadPrefix << ": " << getPrefixOfLevel(level) << ": " << msg << std::endl;
+		ss << m_HeadPrefix << ": " << getPrefixOfLevel(level) << msg << std::endl;
 		std::cout << ss.str();
 	}
 	
 	std::string Logger::getPrefixOfLevel(Logger::LogLevel level) {
 		switch (level) {
 			case WARNING:
-				return "warning";
+				return "warning: ";
 				break;
 			case ERROR:
-				return "error";
+				return "error: ";
 				break;
 			case INFO:
-				return "info";
+				return "info: ";
 				break;
 			case DEBUG:
-				return "DBG";
+				return "DBG: ";
 				break;
 			default:
 				return "";

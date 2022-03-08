@@ -9,7 +9,6 @@
 #include <vector>
 #include "Graph.h"
 #include "Filesystem.h"
-#include <iostream>
 
 namespace Beast {
     std::string executeCommand(const std::string& command, int& exitStatus);

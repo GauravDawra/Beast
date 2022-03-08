@@ -5,7 +5,6 @@
 #pragma once
 
 #include <string>
-#include <iostream>
 
 namespace Beast {
 	class Logger {
@@ -14,7 +13,8 @@ namespace Beast {
 			WARNING = 0,
 			ERROR,
 			INFO,
-			DEBUG
+			DEBUG,
+			DEFAULT
 		};
 
 //		template<typename T>
@@ -28,9 +28,9 @@ namespace Beast {
 	#define LOG_WARNING(msg) Beast::Logger::log(msg, Beast::Logger::LogLevel::WARNING)
 	#define LOG_ERROR(msg)   Beast::Logger::log(msg, Beast::Logger::LogLevel::ERROR)
 	#define LOG_INFO(msg)    Beast::Logger::log(msg, Beast::Logger::LogLevel::INFO)
-
+	#define LOG(msg)         Beast::Logger::log(msg, Beast::Logger::LogLevel::DEFAULT)
 #ifdef BEAST_DEBUG
-	#define LOG_DEBUG(msg)  Beast::Logger::log(msg, Beast::Logger::LogLevel::DEBUG)
+	#define LOG_DEBUG(msg)   Beast::Logger::log(msg, Beast::Logger::LogLevel::DEBUG)
 #else
 	#define LOG_DEBUG(msg)
 #endif

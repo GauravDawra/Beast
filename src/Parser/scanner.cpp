@@ -494,8 +494,10 @@ int line_num = 1;
     #define print(a) 
 #endif
 #line 496 "scanner.cpp"
+/*%option bison-bridge*/
+/*%option bison-locations*/
 /* %option debug */
-#line 498 "scanner.cpp"
+#line 500 "scanner.cpp"
 
 #define INITIAL 0
 
@@ -755,10 +757,10 @@ YY_DECL
 		}
 
 	{
-#line 21 "main.lpp"
+#line 23 "main.lpp"
 
 
-#line 761 "scanner.cpp"
+#line 763 "scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -829,117 +831,117 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 23 "main.lpp"
+#line 25 "main.lpp"
 return token::DEF;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 24 "main.lpp"
+#line 26 "main.lpp"
 return token::BUILD;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 25 "main.lpp"
+#line 27 "main.lpp"
 yylval->emplace<std::string>(yytext); return token::WORD;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 26 "main.lpp"
+#line 28 "main.lpp"
 yylval->emplace<int>(atoi(yytext)); return token::NUMBER;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 27 "main.lpp"
+#line 29 "main.lpp"
 return token::QUOTE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 28 "main.lpp"
+#line 30 "main.lpp"
 return token::SBRAC;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 29 "main.lpp"
+#line 31 "main.lpp"
 return token::EBRAC;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 30 "main.lpp"
+#line 32 "main.lpp"
 return token::COLON;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 31 "main.lpp"
+#line 33 "main.lpp"
 return token::ASSIGN;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 32 "main.lpp"
+#line 34 "main.lpp"
 return token::MULTIPLY;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 33 "main.lpp"
+#line 35 "main.lpp"
 return token::ADD;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 34 "main.lpp"
+#line 36 "main.lpp"
 return token::DIVIDE;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 35 "main.lpp"
+#line 37 "main.lpp"
 return token::SUBTRACT;
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 36 "main.lpp"
+#line 38 "main.lpp"
 yytext[strlen(yytext)-1]='\0'; yylval->emplace<std::string>(yytext + 1); return token::STRING_LIT;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 37 "main.lpp"
+#line 39 "main.lpp"
 yylval->emplace<std::string>(yytext); return token::FILENAME;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 38 "main.lpp"
+#line 40 "main.lpp"
 yylval->emplace<std::string>(yytext + 1); return token::DEREF;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 39 "main.lpp"
+#line 41 "main.lpp"
 yylval->emplace<std::string>(yytext + 1); return token::COMMAND;
 	YY_BREAK
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 40 "main.lpp"
-line_num++; return token::ENDL;
+#line 42 "main.lpp"
+{ loc->lines(yyleng); loc->step(); line_num++; return token::ENDL;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 41 "main.lpp"
+#line 43 "main.lpp"
 /* ignore whitespace */;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 42 "main.lpp"
+#line 44 "main.lpp"
 return token::TAB;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 43 "main.lpp"
+#line 45 "main.lpp"
 return (int)yytext[0];
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 45 "main.lpp"
+#line 47 "main.lpp"
 ECHO;
 	YY_BREAK
-#line 942 "scanner.cpp"
+#line 944 "scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2119,7 +2121,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 45 "main.lpp"
+#line 47 "main.lpp"
 
 
 

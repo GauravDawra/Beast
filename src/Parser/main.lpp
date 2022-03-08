@@ -17,6 +17,8 @@ int line_num = 1;
 
 %option reentrant interactive outfile="scanner.cpp" header="scanner.h"
 %option yylineno
+/*%option bison-bridge*/
+/*%option bison-locations*/
 /* %option debug */
 %%
 
@@ -37,7 +39,7 @@ int line_num = 1;
 [a-zA-Z0-9\/.-]*\.[a-zA-Z0-9\.-]+            yylval->emplace<std::string>(yytext); return token::FILENAME;
 \$[a-zA-Z][a-zA-Z0-9_]*     yylval->emplace<std::string>(yytext + 1); return token::DEREF;
 \![ ]*([^\n])*              yylval->emplace<std::string>(yytext + 1); return token::COMMAND;
-"\n"                      line_num++; return token::ENDL;
+"\n"                      { loc->lines(yyleng); loc->step(); line_num++; return token::ENDL;}
 " "                  /* ignore whitespace */;
 "\t"                    return token::TAB;
 .                    return (int)yytext[0];

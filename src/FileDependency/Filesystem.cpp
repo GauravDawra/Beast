@@ -19,15 +19,13 @@ namespace Beast {
             auto writeTime = std::filesystem::last_write_time(m_Name);
 		#ifdef __clang__
 	        m_LastModified = std::filesystem::_FilesystemClock::to_time_t(writeTime);
-	        
 		#elif __GNUC__
 	        m_LastModified = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(writeTime));
 		#else
             RAISE_ERROR_AND_EXIT("Unsopported compiler", -1);
 		#endif
-//            std::cout << typeid(decltype(writeTime)::clock).name() << std::endl;
-//            m_LastModified = decltype(writeTime)::clock::to_time_t(writeTime);
-//			different options to turn last_write_time into time_t
+            // m_LastModified = decltype(writeTime)::clock::to_time_t(writeTime);
+			// // different options to turn last_write_time into time_t
         }
         else {
             m_LastModified = 0; // assigning 0 timestamp if file is not found

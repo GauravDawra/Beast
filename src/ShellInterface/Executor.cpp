@@ -6,6 +6,7 @@
 #include "Executor.h"
 #include "Logger.h"
 #include "Error.h"
+#include <iostream>
 //#include <omp.h> // bye bye omp for now :)
 namespace Beast::Builder {
 	
@@ -57,7 +58,8 @@ namespace Beast::Builder {
 			FileSystem::fileRef file = fileSystem.getReference(index);
 			auto rule = buildFile.getRule(file->name());
 			if (rule == nullptr and !file->exists()) {
-				RAISE_ERROR_AND_EXIT(file->name() + " doesn't exist and has no build rule", -1);
+				RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
+				return -1;
 			}
 			if (rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
 				continue; // just move on

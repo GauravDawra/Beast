@@ -10,7 +10,7 @@
 namespace Beast {
 
     std::string executeCommand(const std::string &command, int &exitStatus) {
-    	LOG_INFO(command);
+//    	LOG_INFO(command);
         std::array<char, 128> buffer;
         std::string output;
         auto shellPipe = popen(command.c_str(), "r");

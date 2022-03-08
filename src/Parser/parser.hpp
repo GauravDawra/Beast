@@ -45,18 +45,19 @@
 #ifndef YY_YY_PARSER_HPP_INCLUDED
 # define YY_YY_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 33 "main.ypp"
+#line 35 "main.ypp"
 
     #include <vector>
     #include <iostream>
     #include "variable_type.h"
     #include "Memory.h"
+    #include "location.hh"
 
     using string_list = typename std::vector<std::string>;
     using io_dependancy = typename std::pair<std::string, std::vector<std::string> >;
     using assign_type = typename std::pair<std::string, MULTI_TYPE>;
 
-#line 60 "parser.hpp"
+#line 61 "parser.hpp"
 
 
 # include <cstdlib> // std::abort
@@ -190,9 +191,9 @@
 # define YYDEBUG 0
 #endif
 
-#line 25 "main.ypp"
+#line 26 "main.ypp"
 namespace Beast {
-#line 196 "parser.hpp"
+#line 197 "parser.hpp"
 
 
 
@@ -434,19 +435,25 @@ namespace Beast {
     /// Backward compatibility (Bison 3.8).
     typedef value_type semantic_type;
 
+    /// Symbol locations.
+    typedef location location_type;
 
     /// Syntax errors thrown from user actions.
     struct syntax_error : std::runtime_error
     {
-      syntax_error (const std::string& m)
+      syntax_error (const location_type& l, const std::string& m)
         : std::runtime_error (m)
+        , location (l)
       {}
 
       syntax_error (const syntax_error& s)
         : std::runtime_error (s.what ())
+        , location (s.location)
       {}
 
       ~syntax_error () YY_NOEXCEPT YY_NOTHROW;
+
+      location_type location;
     };
 
     /// Token kinds.
@@ -544,7 +551,7 @@ namespace Beast {
     /// Expects its Base type to provide access to the symbol kind
     /// via kind ().
     ///
-    /// Provide access to semantic value.
+    /// Provide access to semantic value and location.
     template <typename Base>
     struct basic_symbol : Base
     {
@@ -554,6 +561,7 @@ namespace Beast {
       /// Default constructor.
       basic_symbol () YY_NOEXCEPT
         : value ()
+        , location ()
       {}
 
 #if 201103L <= YY_CPLUSPLUS
@@ -561,6 +569,7 @@ namespace Beast {
       basic_symbol (basic_symbol&& that)
         : Base (std::move (that))
         , value ()
+        , location (std::move (that.location))
       {
         switch (this->kind ())
     {
@@ -611,96 +620,112 @@ namespace Beast {
 
       /// Constructors for typed symbols.
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t)
+      basic_symbol (typename Base::kind_type t, location_type&& l)
         : Base (t)
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t)
+      basic_symbol (typename Base::kind_type t, const location_type& l)
         : Base (t)
+        , location (l)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, Beast::BuildRule&& v)
+      basic_symbol (typename Base::kind_type t, Beast::BuildRule&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const Beast::BuildRule& v)
+      basic_symbol (typename Base::kind_type t, const Beast::BuildRule& v, const location_type& l)
         : Base (t)
         , value (v)
+        , location (l)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, MULTI_TYPE&& v)
+      basic_symbol (typename Base::kind_type t, MULTI_TYPE&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const MULTI_TYPE& v)
+      basic_symbol (typename Base::kind_type t, const MULTI_TYPE& v, const location_type& l)
         : Base (t)
         , value (v)
+        , location (l)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, assign_type&& v)
+      basic_symbol (typename Base::kind_type t, assign_type&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const assign_type& v)
+      basic_symbol (typename Base::kind_type t, const assign_type& v, const location_type& l)
         : Base (t)
         , value (v)
+        , location (l)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, int&& v)
+      basic_symbol (typename Base::kind_type t, int&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const int& v)
+      basic_symbol (typename Base::kind_type t, const int& v, const location_type& l)
         : Base (t)
         , value (v)
+        , location (l)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, io_dependancy&& v)
+      basic_symbol (typename Base::kind_type t, io_dependancy&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const io_dependancy& v)
+      basic_symbol (typename Base::kind_type t, const io_dependancy& v, const location_type& l)
         : Base (t)
         , value (v)
+        , location (l)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::string&& v)
+      basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::string& v)
+      basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
         : Base (t)
         , value (v)
+        , location (l)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, string_list&& v)
+      basic_symbol (typename Base::kind_type t, string_list&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
+        , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const string_list& v)
+      basic_symbol (typename Base::kind_type t, const string_list& v, const location_type& l)
         : Base (t)
         , value (v)
+        , location (l)
       {}
 #endif
 
@@ -791,6 +816,9 @@ switch (yykind)
       /// The semantic value.
       value_type value;
 
+      /// The location.
+      location_type location;
+
     private:
 #if YY_CPLUSPLUS < 201103L
       /// Assignment operator.
@@ -852,33 +880,33 @@ switch (yykind)
 
       /// Constructor for valueless symbols, and symbols from each type.
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok)
-        : super_type (token_kind_type (tok))
+      symbol_type (int tok, location_type l)
+        : super_type (token_kind_type (tok), std::move (l))
 #else
-      symbol_type (int tok)
-        : super_type (token_kind_type (tok))
+      symbol_type (int tok, const location_type& l)
+        : super_type (token_kind_type (tok), l)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, int v)
-        : super_type (token_kind_type (tok), std::move (v))
+      symbol_type (int tok, int v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
 #else
-      symbol_type (int tok, const int& v)
-        : super_type (token_kind_type (tok), v)
+      symbol_type (int tok, const int& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, std::string v)
-        : super_type (token_kind_type (tok), std::move (v))
+      symbol_type (int tok, std::string v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
 #else
-      symbol_type (int tok, const std::string& v)
-        : super_type (token_kind_type (tok), v)
+      symbol_type (int tok, const std::string& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
 #endif
       {}
     };
 
     /// Build a parser object.
-    Parser (yyscan_t scanner_yyarg, Beast::BuildFile& buildFile_yyarg);
+    Parser (yyscan_t scanner_yyarg, Beast::BuildFile& buildFile_yyarg, Beast::Parser::location_type& loc_yyarg);
     virtual ~Parser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -911,8 +939,9 @@ switch (yykind)
 #endif
 
     /// Report a syntax error.
+    /// \param loc    where the syntax error is found.
     /// \param msg    a description of the syntax error.
-    virtual void error (const std::string& msg);
+    virtual void error (const location_type& loc, const std::string& msg);
 
     /// Report a syntax error.
     void error (const syntax_error& err);
@@ -928,331 +957,331 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_YYEOF ()
+      make_YYEOF (location_type l)
       {
-        return symbol_type (token::YYEOF);
+        return symbol_type (token::YYEOF, std::move (l));
       }
 #else
       static
       symbol_type
-      make_YYEOF ()
+      make_YYEOF (const location_type& l)
       {
-        return symbol_type (token::YYEOF);
+        return symbol_type (token::YYEOF, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_YYerror ()
+      make_YYerror (location_type l)
       {
-        return symbol_type (token::YYerror);
+        return symbol_type (token::YYerror, std::move (l));
       }
 #else
       static
       symbol_type
-      make_YYerror ()
+      make_YYerror (const location_type& l)
       {
-        return symbol_type (token::YYerror);
+        return symbol_type (token::YYerror, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_YYUNDEF ()
+      make_YYUNDEF (location_type l)
       {
-        return symbol_type (token::YYUNDEF);
+        return symbol_type (token::YYUNDEF, std::move (l));
       }
 #else
       static
       symbol_type
-      make_YYUNDEF ()
+      make_YYUNDEF (const location_type& l)
       {
-        return symbol_type (token::YYUNDEF);
+        return symbol_type (token::YYUNDEF, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_DEF ()
+      make_DEF (location_type l)
       {
-        return symbol_type (token::DEF);
+        return symbol_type (token::DEF, std::move (l));
       }
 #else
       static
       symbol_type
-      make_DEF ()
+      make_DEF (const location_type& l)
       {
-        return symbol_type (token::DEF);
+        return symbol_type (token::DEF, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_BUILD ()
+      make_BUILD (location_type l)
       {
-        return symbol_type (token::BUILD);
+        return symbol_type (token::BUILD, std::move (l));
       }
 #else
       static
       symbol_type
-      make_BUILD ()
+      make_BUILD (const location_type& l)
       {
-        return symbol_type (token::BUILD);
+        return symbol_type (token::BUILD, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_QUOTE ()
+      make_QUOTE (location_type l)
       {
-        return symbol_type (token::QUOTE);
+        return symbol_type (token::QUOTE, std::move (l));
       }
 #else
       static
       symbol_type
-      make_QUOTE ()
+      make_QUOTE (const location_type& l)
       {
-        return symbol_type (token::QUOTE);
+        return symbol_type (token::QUOTE, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_SBRAC ()
+      make_SBRAC (location_type l)
       {
-        return symbol_type (token::SBRAC);
+        return symbol_type (token::SBRAC, std::move (l));
       }
 #else
       static
       symbol_type
-      make_SBRAC ()
+      make_SBRAC (const location_type& l)
       {
-        return symbol_type (token::SBRAC);
+        return symbol_type (token::SBRAC, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_EBRAC ()
+      make_EBRAC (location_type l)
       {
-        return symbol_type (token::EBRAC);
+        return symbol_type (token::EBRAC, std::move (l));
       }
 #else
       static
       symbol_type
-      make_EBRAC ()
+      make_EBRAC (const location_type& l)
       {
-        return symbol_type (token::EBRAC);
+        return symbol_type (token::EBRAC, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_COLON ()
+      make_COLON (location_type l)
       {
-        return symbol_type (token::COLON);
+        return symbol_type (token::COLON, std::move (l));
       }
 #else
       static
       symbol_type
-      make_COLON ()
+      make_COLON (const location_type& l)
       {
-        return symbol_type (token::COLON);
+        return symbol_type (token::COLON, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_ASSIGN ()
+      make_ASSIGN (location_type l)
       {
-        return symbol_type (token::ASSIGN);
+        return symbol_type (token::ASSIGN, std::move (l));
       }
 #else
       static
       symbol_type
-      make_ASSIGN ()
+      make_ASSIGN (const location_type& l)
       {
-        return symbol_type (token::ASSIGN);
+        return symbol_type (token::ASSIGN, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_MULTIPLY ()
+      make_MULTIPLY (location_type l)
       {
-        return symbol_type (token::MULTIPLY);
+        return symbol_type (token::MULTIPLY, std::move (l));
       }
 #else
       static
       symbol_type
-      make_MULTIPLY ()
+      make_MULTIPLY (const location_type& l)
       {
-        return symbol_type (token::MULTIPLY);
+        return symbol_type (token::MULTIPLY, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_ADD ()
+      make_ADD (location_type l)
       {
-        return symbol_type (token::ADD);
+        return symbol_type (token::ADD, std::move (l));
       }
 #else
       static
       symbol_type
-      make_ADD ()
+      make_ADD (const location_type& l)
       {
-        return symbol_type (token::ADD);
+        return symbol_type (token::ADD, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_DIVIDE ()
+      make_DIVIDE (location_type l)
       {
-        return symbol_type (token::DIVIDE);
+        return symbol_type (token::DIVIDE, std::move (l));
       }
 #else
       static
       symbol_type
-      make_DIVIDE ()
+      make_DIVIDE (const location_type& l)
       {
-        return symbol_type (token::DIVIDE);
+        return symbol_type (token::DIVIDE, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_SUBTRACT ()
+      make_SUBTRACT (location_type l)
       {
-        return symbol_type (token::SUBTRACT);
+        return symbol_type (token::SUBTRACT, std::move (l));
       }
 #else
       static
       symbol_type
-      make_SUBTRACT ()
+      make_SUBTRACT (const location_type& l)
       {
-        return symbol_type (token::SUBTRACT);
+        return symbol_type (token::SUBTRACT, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_ENDL ()
+      make_ENDL (location_type l)
       {
-        return symbol_type (token::ENDL);
+        return symbol_type (token::ENDL, std::move (l));
       }
 #else
       static
       symbol_type
-      make_ENDL ()
+      make_ENDL (const location_type& l)
       {
-        return symbol_type (token::ENDL);
+        return symbol_type (token::ENDL, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_TAB ()
+      make_TAB (location_type l)
       {
-        return symbol_type (token::TAB);
+        return symbol_type (token::TAB, std::move (l));
       }
 #else
       static
       symbol_type
-      make_TAB ()
+      make_TAB (const location_type& l)
       {
-        return symbol_type (token::TAB);
+        return symbol_type (token::TAB, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_WORD (std::string v)
+      make_WORD (std::string v, location_type l)
       {
-        return symbol_type (token::WORD, std::move (v));
+        return symbol_type (token::WORD, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_WORD (const std::string& v)
+      make_WORD (const std::string& v, const location_type& l)
       {
-        return symbol_type (token::WORD, v);
+        return symbol_type (token::WORD, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_NUMBER (int v)
+      make_NUMBER (int v, location_type l)
       {
-        return symbol_type (token::NUMBER, std::move (v));
+        return symbol_type (token::NUMBER, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_NUMBER (const int& v)
+      make_NUMBER (const int& v, const location_type& l)
       {
-        return symbol_type (token::NUMBER, v);
+        return symbol_type (token::NUMBER, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_DEREF (std::string v)
+      make_DEREF (std::string v, location_type l)
       {
-        return symbol_type (token::DEREF, std::move (v));
+        return symbol_type (token::DEREF, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_DEREF (const std::string& v)
+      make_DEREF (const std::string& v, const location_type& l)
       {
-        return symbol_type (token::DEREF, v);
+        return symbol_type (token::DEREF, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_COMMAND (std::string v)
+      make_COMMAND (std::string v, location_type l)
       {
-        return symbol_type (token::COMMAND, std::move (v));
+        return symbol_type (token::COMMAND, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_COMMAND (const std::string& v)
+      make_COMMAND (const std::string& v, const location_type& l)
       {
-        return symbol_type (token::COMMAND, v);
+        return symbol_type (token::COMMAND, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_FILENAME (std::string v)
+      make_FILENAME (std::string v, location_type l)
       {
-        return symbol_type (token::FILENAME, std::move (v));
+        return symbol_type (token::FILENAME, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_FILENAME (const std::string& v)
+      make_FILENAME (const std::string& v, const location_type& l)
       {
-        return symbol_type (token::FILENAME, v);
+        return symbol_type (token::FILENAME, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_STRING_LIT (std::string v)
+      make_STRING_LIT (std::string v, location_type l)
       {
-        return symbol_type (token::STRING_LIT, std::move (v));
+        return symbol_type (token::STRING_LIT, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_STRING_LIT (const std::string& v)
+      make_STRING_LIT (const std::string& v, const location_type& l)
       {
-        return symbol_type (token::STRING_LIT, v);
+        return symbol_type (token::STRING_LIT, v, l);
       }
 #endif
 
@@ -1568,20 +1597,21 @@ switch (yykind)
     // User arguments.
     yyscan_t scanner;
     Beast::BuildFile& buildFile;
+    Beast::Parser::location_type& loc;
 
   };
 
 
-#line 25 "main.ypp"
+#line 26 "main.ypp"
 } // Beast
-#line 1578 "parser.hpp"
+#line 1608 "parser.hpp"
 
 
 // "%code provides" blocks.
-#line 44 "main.ypp"
+#line 47 "main.ypp"
 
     #define YY_DECL \
-        int yylex(Beast::Parser::semantic_type *yylval, yyscan_t yyscanner)
+        int yylex(Beast::Parser::semantic_type *yylval, Beast::Parser::location_type* loc, yyscan_t yyscanner)
     YY_DECL;
 
     #define ERROR(a) error(a); YYERROR;
@@ -1589,7 +1619,7 @@ switch (yykind)
     	void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile="beast.build");
     }
 
-#line 1593 "parser.hpp"
+#line 1623 "parser.hpp"
 
 
 #endif // !YY_YY_PARSER_HPP_INCLUDED
