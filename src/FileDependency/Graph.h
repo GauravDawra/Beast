@@ -32,7 +32,7 @@ namespace Beast {
     };
 
     void buildGraph(const FileSystem& fileSystem, const BuildFile& buildFile, Graph& graph);
-    void buildDependencyTogether(const BuildFile& buildFile, FileSystem& fileSystem, Graph& graph);
+//    void buildDependencyTogether(const BuildFile& buildFile, FileSystem& fileSystem, Graph& graph);
 }
 
 #endif //BEAST_GRAPH_H

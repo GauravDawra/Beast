@@ -18,14 +18,14 @@ namespace Beast {
         if (m_Exists) {
             auto writeTime = std::filesystem::last_write_time(m_Name);
 //	        auto writeTime = std::chrono::time_point_cast<std::chrono::milliseconds>(std::filesystem::last_write_time(m_Name));
-		#ifdef __clang__
-	        m_LastModified = std::filesystem::_FilesystemClock::to_time_t(writeTime);
-//			LOG_INFO(std::to_string(writeTime.time_since_epoch().count()));
-		#elif __GNUC__
-	        m_LastModified = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(writeTime));
-		#else
-            RAISE_ERROR_AND_EXIT("Unsopported compiler", -1);
-		#endif
+//		#ifdef __clang__
+	        m_LastModified = std::time_t(std::chrono::duration_cast<std::chrono::seconds>(writeTime.time_since_epoch()).count()); // std::filesystem::_FilesystemClock::to_time_t(writeTime);
+//			LOG_INFO(std::to_string(m_LastModified));
+//		#elif __GNUC__
+//	        m_LastModified = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(writeTime));
+//		#else
+//            RAISE_ERROR_AND_EXIT("Unsopported compiler", -1);
+//		#endif
             // m_LastModified = decltype(writeTime)::clock::to_time_t(writeTime);
 			// // different options to turn last_write_time into time_t
         }

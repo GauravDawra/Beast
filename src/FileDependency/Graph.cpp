@@ -100,17 +100,17 @@ namespace Beast {
         }
     }
 
-    void buildDependencyTogether(const BuildFile &buildFile, FileSystem &fileSystem, Graph &graph) {
-        for (const BuildRule& rule : buildFile.getRules()) {
-            const std::string& output = rule.getOutputTarget();
-            fileSystem.addFile(output);
-            graph.tillIndex(fileSystem.index(output));
-            for (const std::string& input : rule.getInputTargets()) {
-                fileSystem.addFile(input);
-                graph.tillIndex(fileSystem.index(input));
-                graph.addEdgeIncremental(fileSystem.index(input), fileSystem.index(output));
-            }
-        }
-    }
+//    void buildDependencyTogether(const BuildFile &buildFile, FileSystem &fileSystem, Graph &graph) {
+//        for (const BuildRule& rule : buildFile.getRules()) {
+//            const std::string& output = rule.getOutputTarget();
+//            fileSystem.addFile(output);
+//            graph.tillIndex(fileSystem.index(output));
+//            for (const std::string& input : rule.getInputTargets()) {
+//                fileSystem.addFile(input);
+//                graph.tillIndex(fileSystem.index(input));
+//                graph.addEdgeIncremental(fileSystem.index(input), fileSystem.index(output));
+//            }
+//        }
+//    }
  
 }

@@ -46,18 +46,18 @@ namespace Beast {
 
         index_t index(const std::string& fileName) const;
         std::string name(const index_t &index) const;
-        void addFile(const std::string& fileName);
         constFileRef getReference(const std::string& fileName) const;
-        fileRef getReference(index_t index) const;
-        inline int size() const {
+		fileRef getReference(index_t index) const;
+		inline int size() const {
             return m_Size;
         }
-        ~FileSystem();
-    private:
-        int m_Size;
-        std::map<std::string, index_t> m_Index;
-        std::vector<fileRef> m_Files;
-    };
+		~FileSystem();
+	private:
+		int m_Size;
+		std::map<std::string, index_t> m_Index;
+		std::vector<fileRef> m_Files;
+		void addFile(const std::string& fileName);
+	};
 
 }
 #endif //BEAST_FILESYSTEM_H
