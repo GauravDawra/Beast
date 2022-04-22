@@ -10,12 +10,12 @@
 namespace Beast {
 
     std::string executeCommand(const std::string &command, int &exitStatus) {
-//    	LOG_INFO(command);
+    	LOG_INFO(command);
         std::array<char, 128> buffer;
         std::string output;
         auto shellPipe = popen(command.c_str(), "r");
         if (!shellPipe) {
-			RAISE_ERROR_AND_EXIT("connection to shell could not be established", 0);
+			RAISE_ERROR_AND_EXIT("connection to shell could not be established", -1);
         }
         while (fgets(buffer.data(), buffer.size(), shellPipe) != nullptr) {
             output += buffer.data();

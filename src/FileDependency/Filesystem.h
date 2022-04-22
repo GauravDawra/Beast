@@ -38,22 +38,24 @@ namespace Beast {
     public:
         using fileRef      = File*;
         using constFileRef = const File*;
+        using index_t      = int32_t;
         FileSystem(int expectedSize = 0);
         FileSystem(const BuildFile& buildFile);
 
 //        FileSystem(const BuildFile &buildFile, Beast::Graph &graph);
 
-        int index(const std::string& fileName) const;
+        index_t index(const std::string& fileName) const;
+        std::string name(const index_t &index) const;
         void addFile(const std::string& fileName);
         constFileRef getReference(const std::string& fileName) const;
-        fileRef getReference(int index) const;
+        fileRef getReference(index_t index) const;
         inline int size() const {
             return m_Size;
         }
         ~FileSystem();
     private:
         int m_Size;
-        std::map<std::string, int> m_Index;
+        std::map<std::string, index_t> m_Index;
         std::vector<fileRef> m_Files;
     };
 

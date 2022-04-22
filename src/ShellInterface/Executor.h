@@ -16,6 +16,6 @@ namespace Beast::Builder {
 	// the following checks if the target really needs to be built
 //	int checkForBuilding(const std::string& target, const BuildFile& buildFile, const FileSystem& fileSystem);
 	
-	int checkAndBuild(const std::string& target, const BuildFile& buildFile,
+	int checkAndBuild(const FileSystem::index_t& target, const BuildFile& buildFile,
 					   const FileSystem& fileSystem);
 }

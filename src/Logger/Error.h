@@ -16,4 +16,4 @@ namespace Beast {
 	#define RAISE_ERROR_AND_EXIT(msg, es)    Error::raiseError(msg, es); exit(es)
 	
 	#define RAISE_WARNING(msg)               Error::raiseWarning(msg)
-}
+}   

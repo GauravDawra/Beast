@@ -3,6 +3,8 @@
 //
 
 #include "Graph.h"
+#include "Error.h"
+#include <unordered_set>
 namespace Beast {
     Graph::Graph(int n) : m_NumNodes(n), m_NumEdges(0), m_IsCyclical(false) {
         m_AdjacencyList.assign(n, std::vector<int>());
@@ -10,7 +12,7 @@ namespace Beast {
     Graph::Graph() : m_NumNodes(0), m_NumEdges(0), m_IsCyclical(false) {
         // blank for now
     }
-    void Graph::addEdge(int u, int v) {
+    void Graph::addEdge(index_t u, index_t v) {
         if(u > m_NumNodes or v > m_NumNodes) {
             return; // failure
         }
@@ -18,7 +20,7 @@ namespace Beast {
         m_NumEdges++;
     }
 
-    void Graph::addEdgeIncremental(int u, int v) {
+    void Graph::addEdgeIncremental(index_t u, index_t v) {
         if (u == m_NumNodes + 1 || v == m_NumNodes + 1) {
             m_AdjacencyList.push_back(std::vector<int>());
         }
@@ -29,7 +31,7 @@ namespace Beast {
         m_NumEdges++;
     }
 
-    void Graph::depthFirstSearch(int cur, std::vector<int>& visited) {
+    void Graph::depthFirstSearch(index_t cur, std::vector<int>& visited) {
         visited[cur] = 1;
         for (int v : m_AdjacencyList[cur]) {
             if (!visited[v]) {
@@ -49,7 +51,7 @@ namespace Beast {
         m_TopologicalSort.clear();
         m_TopologicalSort.reserve(m_NumNodes);
         std::vector<int> visited(m_NumNodes, 0);
-        for (int i = 0; i < m_NumNodes; i++) {
+        for (index_t i = m_NumNodes - 1; i >= 0; i--) { // this has been done in reverse so that if sub->C and B->A is defined in this order, then sub->C is executed first
             if (!visited[i]) {
                 depthFirstSearch(i, visited);
             }
@@ -66,18 +68,35 @@ namespace Beast {
         return m_IsCyclical;
     }
 
-    void Graph::tillIndex(int index) {
+    void Graph::tillIndex(index_t index) {
         while (m_AdjacencyList.size() < index) {
             m_AdjacencyList.emplace_back();
         }
     }
 
     void buildGraph(const FileSystem& fileSystem, const BuildFile& buildFile, Graph& graph) {
+    	std::vector<int8_t> state(fileSystem.size(), 0);
+    	int numRequiredButNotPresent = 0;
+    	std::unordered_set<Graph::index_t> requiredButNotPresent;
         for (const BuildRule& rule : buildFile.getRules()) {
-            int outputIndex = fileSystem.index(rule.getOutputTarget());
-            for (const std::string& inputTarget : rule.getInputTargets()) {
-                graph.addEdge(fileSystem.index(inputTarget), outputIndex);
+            Graph::index_t outputIndex = fileSystem.index(rule.getOutputTarget());
+	        if (state[outputIndex] == 1) {
+            	numRequiredButNotPresent--;
+            	requiredButNotPresent.erase(outputIndex);
             }
+            state[outputIndex] = 2; // it is present
+            for (const std::string& inputTarget : rule.getInputTargets()) {
+            	Graph::index_t inputIndex = fileSystem.index(inputTarget);
+            	if (state[inputIndex] == 0 && !fileSystem.getReference(inputIndex)->exists()) {
+            		state[inputIndex] = 1;
+            		numRequiredButNotPresent++;
+            		requiredButNotPresent.insert(inputIndex);
+            	}
+                graph.addEdge(inputIndex, outputIndex);
+            }
+        }
+        if (requiredButNotPresent.size()) {
+        	RAISE_ERROR_AND_EXIT("Dependency " + fileSystem.name(*requiredButNotPresent.begin()) + " does not exist and has no build rule", -1);
         }
     }
 

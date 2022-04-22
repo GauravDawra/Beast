@@ -15,6 +15,8 @@
 #include "cxxopts.hpp"
 
 const char* BUILD_FILE_NAME = "beast.build";
+#define SET_CWD(cwd) if(cwd.length()) \
+						std::filesystem::current_path(cwd);
 
 int main(int argc, char* argv[]) {
 #ifdef BEAST_DEBUG
@@ -22,7 +24,7 @@ int main(int argc, char* argv[]) {
 #endif
 	
 	signed short numThreads = 1;
-	std::string buildFileDirectory = "";
+	std::string buildFileDirectory;
 	cxxopts::Options CLIoptions(argv[0]);
 	CLIoptions.add_options()
 		("j,threads", "number of working threads", cxxopts::value<signed short>(numThreads)->default_value("1"))
@@ -45,7 +47,8 @@ int main(int argc, char* argv[]) {
 	LOG_DEBUG("Build file directory: " + buildFileDirectory);
 	
     Beast::BuildFile buildFile;
-    Beast::readBuildFile(buildFile, std::filesystem::path(buildFileDirectory) / BUILD_FILE_NAME);
+    SET_CWD(buildFileDirectory);
+    Beast::readBuildFile(buildFile, BUILD_FILE_NAME);
     Beast::FileSystem fileSystem(buildFile);
     LOG_DEBUG("File system built");
     if (numThreads == 1) {
@@ -60,7 +63,7 @@ int main(int argc, char* argv[]) {
     }
     else {
 	    Beast::Parallelizer::TaskScheduler(buildFile, fileSystem).run(numThreads);
-	    LOG_DEBUG("Parallel build complete")
+	    LOG_DEBUG("Parallel build complete");
     }
     
 #ifdef BEAST_DEBUG

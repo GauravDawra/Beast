@@ -11,11 +11,12 @@
 namespace Beast {
     class Graph {
     public:
-        Graph(int n);
+	    using index_t = FileSystem::index_t;
+	    Graph(int n);
         Graph();
-        void addEdge(int u, int v);
-        void addEdgeIncremental(int u, int v);
-        void tillIndex(int index);
+        void addEdge(index_t u, index_t v);
+        void addEdgeIncremental(index_t u, index_t v);
+        void tillIndex(index_t index);
         void topologicalSort();
         inline const std::vector<int>& getSorted() const {
             return m_TopologicalSort;
@@ -25,9 +26,9 @@ namespace Beast {
         const int m_NumNodes; // value of n
         int m_NumEdges;
         bool m_IsCyclical;
-        std::vector<std::vector<int> > m_AdjacencyList;
-        std::vector<int> m_TopologicalSort;
-        void depthFirstSearch(int cur, std::vector<int>& visited);
+        std::vector<std::vector<index_t> > m_AdjacencyList;
+        std::vector<index_t> m_TopologicalSort;
+        void depthFirstSearch(index_t cur, std::vector<int>& visited);
     };
 
     void buildGraph(const FileSystem& fileSystem, const BuildFile& buildFile, Graph& graph);

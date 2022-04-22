@@ -96,7 +96,7 @@ stmt:
 
 build_grp:
     build_head ENDL build_cmds      {
-        LOG_DEBUG("BUILD detected");
+        LOG_DEBUG("BUILD detected for " + $1.first);
         $$.setTable(s_ScratchTable);
         $$.setDependencies($1.first, $1.second);
         $$.setCommands(s_ScratchBuildShellCommands);
@@ -124,6 +124,7 @@ build_head_file_list:
     | build_head_file_list FILENAME     {$$ = $1; $$.push_back($2);}
     | build_head_file_list WORD         {$$ = $1; $$.push_back($2);}
     | build_head_file_list STRING_LIT   {$$ = $1; $$.push_back($2);}
+    | build_head_file_list DEREF		{$$ = $1; if(buildFile.exists($2)) $$.push_back(toString(buildFile.get($2))); else $$.push_back(std::getenv($2.c_str()));}
     ;
 
 build_cmds:
@@ -160,7 +161,7 @@ assign_stmt:
     ;
 
 expr:
-      WORD                          {if(s_ScratchTable.exists($1)) $$ = s_ScratchTable.get($1); else $$ = buildFile.get($1);}
+      WORD                          {if(s_ScratchTable.exists($1)) $$ = s_ScratchTable.get($1); else if(buildFile.exists($1)) $$ = buildFile.get($1); else error(@1, "Symbol " + $1 + " not found");}
     | NUMBER                        {$$ = $1;}
     | STRING_LIT                    {$$ = $1;}
     | expr ADD expr                 {$$ = add($1, $3); LOG_DEBUG("value after addition is " + toString($$)); }

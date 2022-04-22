@@ -17,8 +17,10 @@ namespace Beast {
     void File::calculateTimestamp() {
         if (m_Exists) {
             auto writeTime = std::filesystem::last_write_time(m_Name);
+//	        auto writeTime = std::chrono::time_point_cast<std::chrono::milliseconds>(std::filesystem::last_write_time(m_Name));
 		#ifdef __clang__
 	        m_LastModified = std::filesystem::_FilesystemClock::to_time_t(writeTime);
+//			LOG_INFO(std::to_string(writeTime.time_since_epoch().count()));
 		#elif __GNUC__
 	        m_LastModified = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(writeTime));
 		#else
@@ -63,15 +65,24 @@ namespace Beast {
 //            }
 //        }
 //    }
-    int FileSystem::index(const std::string& fileName) const {
+    FileSystem::index_t FileSystem::index(const std::string& fileName) const {
         auto it = m_Index.find(fileName);
         if (it != m_Index.end()) {
             return it -> second;
         }
         return -1;
     }
-
-     void FileSystem::addFile(const std::string& fileName) {
+    
+	std::string FileSystem::name(const index_t &index) const {
+    	if (index >= 0 && index < m_Size) {
+    		return m_Files[index]->name();
+    	}
+    	else {
+    		return "";
+    	}
+    }
+    
+    void FileSystem::addFile(const std::string& fileName) {
         if (m_Index.find(fileName) == m_Index.end()) {
             m_Index[fileName] = m_Size++;
             m_Files.push_back(new File(fileName));
@@ -79,7 +90,7 @@ namespace Beast {
     }
 
     FileSystem::constFileRef FileSystem::getReference(const std::string &fileName) const {
-        int curIndex = index(fileName);
+        index_t curIndex = index(fileName);
         if (curIndex != -1) {
             return m_Files[curIndex];
         }
@@ -92,7 +103,7 @@ namespace Beast {
         }
     }
 
-    FileSystem::fileRef FileSystem::getReference(int index) const {
+    FileSystem::fileRef FileSystem::getReference(index_t index) const {
         if (index >= 0 && index < m_Size) {
             return m_Files[index];
         }

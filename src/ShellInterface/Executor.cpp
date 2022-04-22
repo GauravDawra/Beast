@@ -54,31 +54,36 @@ namespace Beast::Builder {
 			RAISE_ERROR_AND_EXIT("Dependencies are cyclical", -1);
 		}
 		int exitStatus = 0;
-		for (int index : fileGraph.getSorted()) {
-			FileSystem::fileRef file = fileSystem.getReference(index);
-			auto rule = buildFile.getRule(file->name());
-			if (rule == nullptr and !file->exists()) {
-				RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
-				return -1;
-			}
-			if (rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
-				continue; // just move on
-			}
-			LOG_DEBUG("executing commands for file " + file->name());
-			std::cout << buildRule(*rule, exitStatus);
-			if (exitStatus) {
-				RAISE_ERROR("Problem in building rule \"" + rule->getOutputTarget() + "\"");
+		for (Graph::index_t index : fileGraph.getSorted()) {
+//			FileSystem::fileRef file = fileSystem.getReference(index);
+//			auto rule = buildFile.getRule(file->name());
+//			if (rule == nullptr and !file->exists()) {
+//				RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
+//				return -1;
+//			}
+//			if (rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
+//				continue; // just move on
+//			}
+//			LOG_DEBUG("executing commands for file " + file->name());
+//			std::cout << buildRule(*rule, exitStatus);
+//			if (exitStatus) {
+//				RAISE_ERROR("Problem in building rule \"" + rule->getOutputTarget() + "\"");
+//				return exitStatus;
+//			}
+//			file->refresh();    // refresh time stamp
+			if((exitStatus = checkAndBuild(index, buildFile, fileSystem))) {
 				return exitStatus;
 			}
-			file->refresh();    // refresh time stamp
+			
 		}
 		return exitStatus;
 	}
 	
-	int checkAndBuild(const std::string& target, const BuildFile& buildFile, const FileSystem& fileSystem) {
-		int indexFile = fileSystem.index(target);
-		auto file = fileSystem.getReference(indexFile); // might use file Index instead of string later
-		auto rule = buildFile.getRule(target);
+	int checkAndBuild(const FileSystem::index_t& target, const BuildFile& buildFile, const FileSystem& fileSystem) {
+//		int indexFile = fileSystem.index(target);
+		auto file = fileSystem.getReference(target); // might use file Index instead of string later
+		auto rule = buildFile.getRule(file->name());
+//		std::cout << target <<": "<<file->name() << std::endl;
 		if(rule == nullptr and !file->exists()) {
 			RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
 			return -1;
@@ -90,7 +95,7 @@ namespace Beast::Builder {
 		int exitStatus = 0;
 		std::cout << buildRule(*rule, exitStatus);
 		if(exitStatus){
-			RAISE_ERROR("Problem in building rule \"" + target + "\"");
+			RAISE_ERROR("Problem in building rule \"" + file->name() + "\"");
 			return exitStatus;
 		}
 		file->refresh();

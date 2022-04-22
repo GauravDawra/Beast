@@ -16,15 +16,15 @@ namespace Beast::Parallelizer {
 	class TaskScheduler { // works in conjunction with the FileSystem
 	public:
 		TaskScheduler(const BuildFile& buildFile, const FileSystem& fileSystem);
-		void addDependency(const std::string& input, const std::string& output);
+		void addDependency(const FileSystem::index_t& input, const FileSystem::index_t& output);
 		void run(int numThreads);
 	private:
 		Graph m_FileGraph;
 		const FileSystem& m_FileSystem;
 		const BuildFile& m_BuildFile;
 		tf::Taskflow m_Taskflow;
-		std::map<std::string, tf::Task> m_TaskLookup;
-		tf::Task& getTask(const std::string& target);
+		std::map<FileSystem::index_t, tf::Task> m_TaskLookup;
+		tf::Task& getTask(const FileSystem::index_t& target);
 		void buildGraphAndDependencies();
 	};
 }
