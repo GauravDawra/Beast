@@ -14,6 +14,7 @@ namespace Beast {
 			ERROR,
 			INFO,
 			DEBUG,
+			PLAIN,
 			DEFAULT
 		};
 
@@ -28,7 +29,9 @@ namespace Beast {
 	#define LOG_WARNING(msg) Beast::Logger::log(msg, Beast::Logger::LogLevel::WARNING)
 	#define LOG_ERROR(msg)   Beast::Logger::log(msg, Beast::Logger::LogLevel::ERROR)
 	#define LOG_INFO(msg)    Beast::Logger::log(msg, Beast::Logger::LogLevel::INFO)
+	#define LOG_PLAIN(msg)   Beast::Logger::log(msg, Beast::Logger::LogLevel::PLAIN)
 	#define LOG(msg)         Beast::Logger::log(msg, Beast::Logger::LogLevel::DEFAULT)
+	
 #ifdef BEAST_DEBUG
 	#define LOG_DEBUG(msg)   Beast::Logger::log(msg, Beast::Logger::LogLevel::DEBUG)
 #else

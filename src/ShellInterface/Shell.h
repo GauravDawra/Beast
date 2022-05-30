@@ -4,16 +4,16 @@
 
 #pragma once
 
-#include "Memory.h"
+//#include "Memory.h"
 #include <string>
 #include <vector>
-#include "Graph.h"
-#include "Filesystem.h"
+//#include "Graph.h"
+//#include "Filesystem.h"
 
 namespace Beast {
     std::string executeCommand(const std::string& command, int& exitStatus);
     #define EXECUTE(comm, status) executeCommand(comm, status)
     std::string executeCommands(const std::vector<std::string>& commands, int& exitStatus);
-    bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem);
+//    bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem);
     
 }

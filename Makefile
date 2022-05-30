@@ -3,7 +3,7 @@ TARGET = beast
 VENDOR = vendor/
 export VENDOR
 
-CC ?= g++
+CXX ?= g++
 
 ifeq ("$(MODE)", "DEBUG")
 DEFINES += -DBEAST_DEBUG

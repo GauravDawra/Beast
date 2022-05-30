@@ -76,7 +76,7 @@ namespace Beast {
 
     void buildGraph(const FileSystem& fileSystem, const BuildFile& buildFile, Graph& graph) {
     	std::vector<int8_t> state(fileSystem.size(), 0);
-    	int numRequiredButNotPresent = 0;
+    	FileSystem::index_t numRequiredButNotPresent = 0;
     	std::unordered_set<Graph::index_t> requiredButNotPresent;
         for (const BuildRule& rule : buildFile.getRules()) {
             Graph::index_t outputIndex = fileSystem.index(rule.getOutputTarget());

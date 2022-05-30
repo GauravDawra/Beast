@@ -1,7 +1,12 @@
 #include "Error.h"
 #include "Memory.h"
+#include "Shell.h"
 
 namespace Beast {
+
+	SymbolTable::SymbolTable() {
+		
+	}
 
     MULTI_TYPE SymbolTable::get(const std::string& key) const {
         std::map<std::string, MULTI_TYPE>::const_iterator it = m_LookupTree.find(key);
@@ -17,6 +22,49 @@ namespace Beast {
         if(m_LookupTree.find(key) != m_LookupTree.end())
         	return true;
         return false;
+    }
+	
+	void SymbolTable::resolve(std::string &name, const SymbolTable& baseTable) const {
+		static char DEREF_CHAR = '$'; // character used for dereferencing in commands
+		std::string ans;
+		for(int i=0;i<name.length();i++) {
+			if(name[i] == DEREF_CHAR) {
+				if(i + 1 == name.length()) break;
+				if (name[i+1] == '(') {
+					int j = i;
+					while(j < name.length() and name[j] != ')')
+						j++;
+					if (j == name.length()){
+						RAISE_ERROR_AND_EXIT("irregular dereference in name - " + name, -1);
+					}
+					std::string variable = name.substr(i+2, j-(i+2));
+					if(exists(variable)) {
+						ans += toString(get(variable));
+					} else if(baseTable.exists(variable)) {
+						ans += toString(baseTable.get(variable));
+					} else {
+						ans += name.substr(i, j-i+1); // let it be in the dereference form
+					}
+					i = j;
+				}
+				else { // single letter dereference
+					std::string variable = std::string(1, name[i+1]);
+					if(exists(variable)) {
+						ans += toString(get(variable));
+					} else if(baseTable.exists(variable)) {
+						ans += toString(baseTable.get(variable));
+					} else { // if symbol not found
+						ans += DEREF_CHAR;
+						ans += variable; // adding name[i+1]
+					}
+					i++;
+				}
+			}
+			else { // if not a dereference
+				ans += name[i];
+			}
+		}
+		name = ans;
     }
     
     void SymbolTable::changeTable(const SymbolTable& table) {
@@ -43,52 +91,58 @@ namespace Beast {
     
 	void BuildRule::resolveCommands(const SymbolTable &baseTable) {
     	for (std::string& command : m_Commands) {
-		    resolveCommand(baseTable, command);
+		    resolve(command, baseTable);
 	    }
 	}
 	
-	void BuildRule::resolveCommand(const SymbolTable& baseTable, std::string& command) {
-		static char DEREF_CHAR = '$'; // character used for dereferencing in commands
-		std::string ans;
-		for(int i=0;i<command.length();i++) {
-			if(command[i] == DEREF_CHAR) {
-				if(i + 1 == command.length()) break;
-				if (command[i+1] == '(') {
-					int j = i;
-					while(j < command.length() and command[j] != ')')
-						j++;
-					if (j == command.length()){
-						RAISE_ERROR_AND_EXIT("irregular dereference in command - " + command, -1);
-					}
-					std::string variable = command.substr(i+2, j-(i+2));
-					if(exists(variable)) {
-						ans += toString(get(variable));
-					} else if(baseTable.exists(variable)) {
-						ans += toString(baseTable.get(variable));
-					} else {
-						ans += command.substr(i, j-i+1); // let it be in the dereference form
-					}
-					i = j;
-				}
-				else { // single letter dereference
-					std::string variable = std::string(1, command[i+1]);
-					if(exists(variable)) {
-						ans += toString(get(variable));
-					} else if(baseTable.exists(variable)) {
-						ans += toString(baseTable.get(variable));
-					} else { // if symbol not found
-						ans += DEREF_CHAR;
-						ans += variable; // adding command[i+1]
-					}
-					i++;
-				}
-			}
-			else { // if not a dereference
-				ans += command[i];
-			}
-		}
-		command = ans;
-    }
+	std::string BuildRule::build(int &exitStatus) const {
+		std::string output = executeCommands(m_Commands, exitStatus);
+		m_Built = true;
+		return output;
+	}
+	
+//	void BuildRule::resolveCommand(const SymbolTable& baseTable, std::string& command) {
+//		static char DEREF_CHAR = '$'; // character used for dereferencing in commands
+//		std::string ans;
+//		for(int i=0;i<command.length();i++) {
+//			if(command[i] == DEREF_CHAR) {
+//				if(i + 1 == command.length()) break;
+//				if (command[i+1] == '(') {
+//					int j = i;
+//					while(j < command.length() and command[j] != ')')
+//						j++;
+//					if (j == command.length()){
+//						RAISE_ERROR_AND_EXIT("irregular dereference in name - " + command, -1);
+//					}
+//					std::string variable = command.substr(i+2, j-(i+2));
+//					if(exists(variable)) {
+//						ans += toString(get(variable));
+//					} else if(baseTable.exists(variable)) {
+//						ans += toString(baseTable.get(variable));
+//					} else {
+//						ans += command.substr(i, j-i+1); // let it be in the dereference form
+//					}
+//					i = j;
+//				}
+//				else { // single letter dereference
+//					std::string variable = std::string(1, command[i+1]);
+//					if(exists(variable)) {
+//						ans += toString(get(variable));
+//					} else if(baseTable.exists(variable)) {
+//						ans += toString(baseTable.get(variable));
+//					} else { // if symbol not found
+//						ans += DEREF_CHAR;
+//						ans += variable; // adding name[i+1]
+//					}
+//					i++;
+//				}
+//			}
+//			else { // if not a dereference
+//				ans += command[i];
+//			}
+//		}
+//		command = ans;
+//    }
 	
     BuildFile::BuildFile() {
         // initialize member variables and default global variables here
@@ -113,12 +167,27 @@ namespace Beast {
     		rule.resolveCommands(*this);
     	}
     }
+	
+	BuildFile::index_t BuildFile::index(const std::string& output) const {
+		auto index_iter = m_Index.find(output);
+		if (index_iter != m_Index.end()) {
+			return index_iter->second;
+		}
+		return -1;
+	}
     
-    const BuildRule* BuildFile::getRule(const std::string& output) const {
-        auto index = m_Index.find(output);
-        if (index != m_Index.end()) {
-            return &m_BuildRules[index->second];
+    BuildFile::constRuleRef BuildFile::getRule(const std::string& output) const {
+        auto index_iter = m_Index.find(output);
+        if (index_iter != m_Index.end()) {
+            return &(m_BuildRules[index_iter->second]);
         }
         return nullptr;
     }
+	
+	BuildFile::constRuleRef BuildFile::getRule(const index_t& index) const {
+		if (index >= 0 && index < m_BuildRules.size()) {
+			return &(m_BuildRules[index]);
+		}
+		return nullptr;
+	}
 }

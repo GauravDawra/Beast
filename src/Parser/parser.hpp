@@ -409,8 +409,7 @@ namespace Beast {
       // COMMAND
       // FILENAME
       // STRING_LIT
-      // func_call
-      // def_head
+      // file
       char dummy6[sizeof (std::string)];
 
       // build_head_file_list
@@ -465,25 +464,24 @@ namespace Beast {
     YYEOF = 0,                     // "end of file"
     YYerror = 256,                 // error
     YYUNDEF = 257,                 // "invalid token"
-    DEF = 258,                     // DEF
-    BUILD = 259,                   // BUILD
-    QUOTE = 260,                   // QUOTE
-    SBRAC = 261,                   // SBRAC
-    EBRAC = 262,                   // EBRAC
-    COLON = 263,                   // COLON
-    ASSIGN = 264,                  // ASSIGN
-    MULTIPLY = 265,                // MULTIPLY
-    ADD = 266,                     // ADD
-    DIVIDE = 267,                  // DIVIDE
-    SUBTRACT = 268,                // SUBTRACT
-    ENDL = 269,                    // ENDL
-    TAB = 270,                     // TAB
-    WORD = 271,                    // WORD
-    NUMBER = 272,                  // NUMBER
-    DEREF = 273,                   // DEREF
-    COMMAND = 274,                 // COMMAND
-    FILENAME = 275,                // FILENAME
-    STRING_LIT = 276               // STRING_LIT
+    BUILD = 258,                   // BUILD
+    QUOTE = 259,                   // QUOTE
+    SBRAC = 260,                   // SBRAC
+    EBRAC = 261,                   // EBRAC
+    COLON = 262,                   // COLON
+    ASSIGN = 263,                  // ASSIGN
+    MULTIPLY = 264,                // MULTIPLY
+    ADD = 265,                     // ADD
+    DIVIDE = 266,                  // DIVIDE
+    SUBTRACT = 267,                // SUBTRACT
+    ENDL = 268,                    // ENDL
+    TAB = 269,                     // TAB
+    WORD = 270,                    // WORD
+    NUMBER = 271,                  // NUMBER
+    DEREF = 272,                   // DEREF
+    COMMAND = 273,                 // COMMAND
+    FILENAME = 274,                // FILENAME
+    STRING_LIT = 275               // STRING_LIT
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -500,43 +498,39 @@ namespace Beast {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 22, ///< Number of tokens.
+        YYNTOKENS = 21, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
         S_YYUNDEF = 2,                           // "invalid token"
-        S_DEF = 3,                               // DEF
-        S_BUILD = 4,                             // BUILD
-        S_QUOTE = 5,                             // QUOTE
-        S_SBRAC = 6,                             // SBRAC
-        S_EBRAC = 7,                             // EBRAC
-        S_COLON = 8,                             // COLON
-        S_ASSIGN = 9,                            // ASSIGN
-        S_MULTIPLY = 10,                         // MULTIPLY
-        S_ADD = 11,                              // ADD
-        S_DIVIDE = 12,                           // DIVIDE
-        S_SUBTRACT = 13,                         // SUBTRACT
-        S_ENDL = 14,                             // ENDL
-        S_TAB = 15,                              // TAB
-        S_WORD = 16,                             // WORD
-        S_NUMBER = 17,                           // NUMBER
-        S_DEREF = 18,                            // DEREF
-        S_COMMAND = 19,                          // COMMAND
-        S_FILENAME = 20,                         // FILENAME
-        S_STRING_LIT = 21,                       // STRING_LIT
-        S_YYACCEPT = 22,                         // $accept
-        S_stmts = 23,                            // stmts
-        S_stmt = 24,                             // stmt
-        S_build_grp = 25,                        // build_grp
-        S_build_head = 26,                       // build_head
-        S_build_head_file_list = 27,             // build_head_file_list
+        S_BUILD = 3,                             // BUILD
+        S_QUOTE = 4,                             // QUOTE
+        S_SBRAC = 5,                             // SBRAC
+        S_EBRAC = 6,                             // EBRAC
+        S_COLON = 7,                             // COLON
+        S_ASSIGN = 8,                            // ASSIGN
+        S_MULTIPLY = 9,                          // MULTIPLY
+        S_ADD = 10,                              // ADD
+        S_DIVIDE = 11,                           // DIVIDE
+        S_SUBTRACT = 12,                         // SUBTRACT
+        S_ENDL = 13,                             // ENDL
+        S_TAB = 14,                              // TAB
+        S_WORD = 15,                             // WORD
+        S_NUMBER = 16,                           // NUMBER
+        S_DEREF = 17,                            // DEREF
+        S_COMMAND = 18,                          // COMMAND
+        S_FILENAME = 19,                         // FILENAME
+        S_STRING_LIT = 20,                       // STRING_LIT
+        S_YYACCEPT = 21,                         // $accept
+        S_stmts = 22,                            // stmts
+        S_stmt = 23,                             // stmt
+        S_build_grp = 24,                        // build_grp
+        S_build_head = 25,                       // build_head
+        S_build_head_file_list = 26,             // build_head_file_list
+        S_file = 27,                             // file
         S_build_cmds = 28,                       // build_cmds
-        S_func_call = 29,                        // func_call
-        S_def_grp = 30,                          // def_grp
-        S_def_head = 31,                         // def_head
-        S_def_body = 32,                         // def_body
-        S_assign_stmt = 33,                      // assign_stmt
-        S_expr = 34                              // expr
+        S_assign_stmt = 29,                      // assign_stmt
+        S_expr = 30                              // expr
       };
     };
 
@@ -598,8 +592,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -778,8 +771,7 @@ switch (yykind)
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.template destroy< std::string > ();
         break;
 
@@ -997,21 +989,6 @@ switch (yykind)
       make_YYUNDEF (const location_type& l)
       {
         return symbol_type (token::YYUNDEF, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_DEF (location_type l)
-      {
-        return symbol_type (token::DEF, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_DEF (const location_type& l)
-      {
-        return symbol_type (token::DEF, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1588,8 +1565,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 50,     ///< Last index in yytable_.
-      yynnts_ = 13,  ///< Number of nonterminal symbols.
+      yylast_ = 35,     ///< Last index in yytable_.
+      yynnts_ = 10,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1604,7 +1581,7 @@ switch (yykind)
 
 #line 26 "main.ypp"
 } // Beast
-#line 1608 "parser.hpp"
+#line 1585 "parser.hpp"
 
 
 // "%code provides" blocks.
@@ -1619,7 +1596,7 @@ switch (yykind)
     	void readBuildFile(Beast::BuildFile& buildFile, const std::string& inputFile="beast.build");
     }
 
-#line 1623 "parser.hpp"
+#line 1600 "parser.hpp"
 
 
 #endif // !YY_YY_PARSER_HPP_INCLUDED

@@ -55,7 +55,7 @@ static std::vector<std::string> s_ScratchBuildShellCommands;
     }
 }
 
-%token DEF BUILD QUOTE SBRAC EBRAC COLON ASSIGN MULTIPLY ADD DIVIDE SUBTRACT ENDL TAB
+%token BUILD QUOTE SBRAC EBRAC COLON ASSIGN MULTIPLY ADD DIVIDE SUBTRACT ENDL TAB // DEF
 
 %token <std::string> WORD
 %token <int>         NUMBER
@@ -64,14 +64,15 @@ static std::vector<std::string> s_ScratchBuildShellCommands;
 %token <std::string> FILENAME
 %token <std::string> STRING_LIT
 
-%nterm <std::string> def_head
+/* %nterm <std::string> def_head */
 %nterm <string_list> build_head_file_list
+%nterm <std::string> file
 %nterm <string_list> build_cmds
 %nterm <MULTI_TYPE>  expr
 /* %nterm <std::string> dep */
 %nterm <io_dependancy> build_head
 %nterm <Beast::BuildRule> build_grp
-%nterm <std::string> func_call
+/* %nterm <std::string> func_call */
 %nterm <assign_type> assign_stmt
 
 %nonassoc           ASSIGN
@@ -89,7 +90,7 @@ stmts:
 
 stmt:
       build_grp              {;}
-    | def_grp                {;}
+    /* | def_grp                {;} */
     | assign_stmt ENDL       {buildFile.set($1.first, $1.second);}
     | ENDL
     ;
@@ -119,22 +120,30 @@ build_head:
     ;
 
 build_head_file_list:
-    | WORD                              {$$.push_back($1);} // no empty rule...
+    | build_head_file_list file         {$$ = $1; $$.push_back($2);}
+    /* | WORD                              {$$.push_back($1);} // no empty rule...
     | FILENAME                          {$$.push_back($1);} // to avoid empty lists
-    | build_head_file_list FILENAME     {$$ = $1; $$.push_back($2);}
     | build_head_file_list WORD         {$$ = $1; $$.push_back($2);}
+    | build_head_file_list FILENAME     {$$ = $1; $$.push_back($2);}
     | build_head_file_list STRING_LIT   {$$ = $1; $$.push_back($2);}
     | build_head_file_list DEREF		{$$ = $1; if(buildFile.exists($2)) $$.push_back(toString(buildFile.get($2))); else $$.push_back(std::getenv($2.c_str()));}
-    ;
+    ; */
+	;
+file:
+	WORD								{$$ = $1; buildFile.resolve($$, SymbolTable());}
+	| FILENAME                          {$$ = $1; buildFile.resolve($$, SymbolTable());}
+	| STRING_LIT                        {$$ = $1; buildFile.resolve($$, SymbolTable());}
+	| DEREF                             {$$ = $1; buildFile.resolve($$, SymbolTable());}
+	;
 
 build_cmds:
     | build_cmds TAB COMMAND     {s_ScratchBuildShellCommands.push_back($3); }
-    | build_cmds TAB func_call   {} // wrong for now... temporary
+    /* | build_cmds TAB func_call   {} // wrong for now... temporary */
     | build_cmds TAB assign_stmt {s_ScratchTable.set($3.first, $3.second);}
     | build_cmds ENDL
     | build_cmds TAB
     ;
-
+/* 
 func_call:
     WORD SBRAC EBRAC     {$$ = $1; LOG_DEBUG("Function call detected: " + $1);}
     ;
@@ -153,7 +162,7 @@ def_body:
     | def_body TAB assign_stmt
     | def_body ENDL
     | def_body TAB
-    ;
+    ; */
 
 
 assign_stmt:
@@ -189,8 +198,7 @@ str_expr:
 
 
 void Beast::Parser::error(const location_type& loc, const std::string& msg) {
-	//std::cout << loc.begin.line << std::endl;
-    RAISE_ERROR_AND_EXIT("parse error at line " + std::to_string(loc.begin.line) + ": " + msg, -1);
+    RAISE_ERROR_AND_EXIT("parse error at line " + std::to_string(loc.begin.line) + ": " + msg, 1);
 }
 
 #ifdef PARSER_TEST
@@ -225,7 +233,7 @@ namespace Beast {
 			yyset_in(inputFile_pointer, scanner);
 		}
 		else{
-			RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, -1);
+			RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, 10);
 		}
 		Beast::Parser parser{scanner, buildFile, loc};
 		#if YYDEBUG == 1

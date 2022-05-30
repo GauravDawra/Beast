@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 	try {
 		result = CLIoptions.parse(argc, argv);
 	} catch(const cxxopts::OptionException& e) {
-		Beast::RAISE_ERROR_AND_EXIT(e.what(), -1);
+		Beast::RAISE_ERROR_AND_EXIT(e.what(), 2);
 	}
 	
 	if (result.count("help")) { // print help
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     if (numThreads == 1) {
         Beast::Graph fileGraph(fileSystem.size());
 	    Beast::buildGraph(fileSystem, buildFile, fileGraph);
-	    fileGraph.topologicalSort();
+//	    fileGraph.topologicalSort(); // already done in build()
 	    LOG_DEBUG("graph built and sorted");
 		LOG_DEBUG("Starting build");
 	    int es = Beast::Builder::build(buildFile, fileSystem, fileGraph);

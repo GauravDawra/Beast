@@ -215,8 +215,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
@@ -281,8 +280,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
@@ -417,8 +415,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
         break;
 
@@ -467,8 +464,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.move< std::string > (YY_MOVE (that.value));
         break;
 
@@ -517,8 +513,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.copy< std::string > (that.value);
         break;
 
@@ -566,8 +561,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         value.move< std::string > (that.value);
         break;
 
@@ -859,8 +853,7 @@ namespace Beast {
       case symbol_kind::S_COMMAND: // COMMAND
       case symbol_kind::S_FILENAME: // FILENAME
       case symbol_kind::S_STRING_LIT: // STRING_LIT
-      case symbol_kind::S_func_call: // func_call
-      case symbol_kind::S_def_head: // def_head
+      case symbol_kind::S_file: // file
         yylhs.value.emplace< std::string > ();
         break;
 
@@ -890,37 +883,31 @@ namespace Beast {
           switch (yyn)
             {
   case 2: // stmts: %empty
-#line 86 "main.ypp"
+#line 87 "main.ypp"
                             {;}
-#line 896 "parser.cpp"
+#line 889 "parser.cpp"
     break;
 
   case 3: // stmts: stmts stmt
-#line 87 "main.ypp"
+#line 88 "main.ypp"
                             {LOG_DEBUG("STMT detected " + std::to_string(line_num));}
-#line 902 "parser.cpp"
+#line 895 "parser.cpp"
     break;
 
   case 4: // stmt: build_grp
-#line 91 "main.ypp"
-                             {;}
-#line 908 "parser.cpp"
-    break;
-
-  case 5: // stmt: def_grp
 #line 92 "main.ypp"
                              {;}
-#line 914 "parser.cpp"
+#line 901 "parser.cpp"
     break;
 
-  case 6: // stmt: assign_stmt ENDL
-#line 93 "main.ypp"
+  case 5: // stmt: assign_stmt ENDL
+#line 94 "main.ypp"
                              {buildFile.set(yystack_[1].value.as < assign_type > ().first, yystack_[1].value.as < assign_type > ().second);}
-#line 920 "parser.cpp"
+#line 907 "parser.cpp"
     break;
 
-  case 8: // build_grp: build_head ENDL build_cmds
-#line 98 "main.ypp"
+  case 7: // build_grp: build_head ENDL build_cmds
+#line 99 "main.ypp"
                                     {
         LOG_DEBUG("BUILD detected for " + yystack_[2].value.as < io_dependancy > ().first);
         yylhs.value.as < Beast::BuildRule > ().setTable(s_ScratchTable);
@@ -931,11 +918,11 @@ namespace Beast {
         s_ScratchBuildShellCommands.clear();
         yylhs.location = yystack_[2].location;
     }
-#line 935 "parser.cpp"
+#line 922 "parser.cpp"
     break;
 
-  case 9: // build_head: BUILD build_head_file_list COLON build_head_file_list
-#line 111 "main.ypp"
+  case 8: // build_head: BUILD build_head_file_list COLON build_head_file_list
+#line 112 "main.ypp"
                                                           {
             if (yystack_[2].value.as < string_list > ().size() != 1) 
                 error(yystack_[2].location, "exactly one output target is required");
@@ -944,149 +931,113 @@ namespace Beast {
             LOG_DEBUG("build head detected for " + yystack_[2].value.as < string_list > () [0]);
             yylhs.location = yystack_[3].location;
         }
-#line 948 "parser.cpp"
+#line 935 "parser.cpp"
     break;
 
-  case 11: // build_head_file_list: WORD
-#line 122 "main.ypp"
-                                        {yylhs.value.as < string_list > ().push_back(yystack_[0].value.as < std::string > ());}
-#line 954 "parser.cpp"
-    break;
-
-  case 12: // build_head_file_list: FILENAME
+  case 10: // build_head_file_list: build_head_file_list file
 #line 123 "main.ypp"
-                                        {yylhs.value.as < string_list > ().push_back(yystack_[0].value.as < std::string > ());}
-#line 960 "parser.cpp"
-    break;
-
-  case 13: // build_head_file_list: build_head_file_list FILENAME
-#line 124 "main.ypp"
                                         {yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); yylhs.value.as < string_list > ().push_back(yystack_[0].value.as < std::string > ());}
-#line 966 "parser.cpp"
+#line 941 "parser.cpp"
     break;
 
-  case 14: // build_head_file_list: build_head_file_list WORD
-#line 125 "main.ypp"
-                                        {yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); yylhs.value.as < string_list > ().push_back(yystack_[0].value.as < std::string > ());}
-#line 972 "parser.cpp"
-    break;
-
-  case 15: // build_head_file_list: build_head_file_list STRING_LIT
-#line 126 "main.ypp"
-                                        {yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); yylhs.value.as < string_list > ().push_back(yystack_[0].value.as < std::string > ());}
-#line 978 "parser.cpp"
-    break;
-
-  case 16: // build_head_file_list: build_head_file_list DEREF
-#line 127 "main.ypp"
-                                                {yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); if(buildFile.exists(yystack_[0].value.as < std::string > ())) yylhs.value.as < string_list > ().push_back(toString(buildFile.get(yystack_[0].value.as < std::string > ()))); else yylhs.value.as < string_list > ().push_back(std::getenv(yystack_[0].value.as < std::string > ().c_str()));}
-#line 984 "parser.cpp"
-    break;
-
-  case 18: // build_cmds: build_cmds TAB COMMAND
-#line 131 "main.ypp"
-                                 {s_ScratchBuildShellCommands.push_back(yystack_[0].value.as < std::string > ()); }
-#line 990 "parser.cpp"
-    break;
-
-  case 19: // build_cmds: build_cmds TAB func_call
-#line 132 "main.ypp"
-                                 {}
-#line 996 "parser.cpp"
-    break;
-
-  case 20: // build_cmds: build_cmds TAB assign_stmt
+  case 11: // file: WORD
 #line 133 "main.ypp"
-                                 {s_ScratchTable.set(yystack_[0].value.as < assign_type > ().first, yystack_[0].value.as < assign_type > ().second);}
-#line 1002 "parser.cpp"
+                                                                        {yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); buildFile.resolve(yylhs.value.as < std::string > (), SymbolTable());}
+#line 947 "parser.cpp"
     break;
 
-  case 21: // build_cmds: build_cmds ENDL
+  case 12: // file: FILENAME
 #line 134 "main.ypp"
-      { yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); }
-#line 1008 "parser.cpp"
+                                            {yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); buildFile.resolve(yylhs.value.as < std::string > (), SymbolTable());}
+#line 953 "parser.cpp"
     break;
 
-  case 22: // build_cmds: build_cmds TAB
+  case 13: // file: STRING_LIT
 #line 135 "main.ypp"
-      { yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); }
-#line 1014 "parser.cpp"
+                                            {yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); buildFile.resolve(yylhs.value.as < std::string > (), SymbolTable());}
+#line 959 "parser.cpp"
     break;
 
-  case 23: // func_call: WORD SBRAC EBRAC
-#line 139 "main.ypp"
-                         {yylhs.value.as < std::string > () = yystack_[2].value.as < std::string > (); LOG_DEBUG("Function call detected: " + yystack_[2].value.as < std::string > ());}
-#line 1020 "parser.cpp"
+  case 14: // file: DEREF
+#line 136 "main.ypp"
+                                            {yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); buildFile.resolve(yylhs.value.as < std::string > (), SymbolTable());}
+#line 965 "parser.cpp"
     break;
 
-  case 24: // def_grp: def_head ENDL def_body
+  case 16: // build_cmds: build_cmds TAB COMMAND
+#line 140 "main.ypp"
+                                 {s_ScratchBuildShellCommands.push_back(yystack_[0].value.as < std::string > ()); }
+#line 971 "parser.cpp"
+    break;
+
+  case 17: // build_cmds: build_cmds TAB assign_stmt
+#line 142 "main.ypp"
+                                 {s_ScratchTable.set(yystack_[0].value.as < assign_type > ().first, yystack_[0].value.as < assign_type > ().second);}
+#line 977 "parser.cpp"
+    break;
+
+  case 18: // build_cmds: build_cmds ENDL
 #line 143 "main.ypp"
-                                {std::cout << "function definition detected at " << line_num << std::endl;}
-#line 1026 "parser.cpp"
+      { yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); }
+#line 983 "parser.cpp"
     break;
 
-  case 25: // def_head: DEF WORD COLON
-#line 147 "main.ypp"
-                            {std::cout << "def head detected\n"; yylhs.value.as < std::string > () = yystack_[1].value.as < std::string > ();}
-#line 1032 "parser.cpp"
+  case 19: // build_cmds: build_cmds TAB
+#line 144 "main.ypp"
+      { yylhs.value.as < string_list > () = yystack_[1].value.as < string_list > (); }
+#line 989 "parser.cpp"
     break;
 
-  case 27: // def_body: def_body TAB COMMAND
-#line 151 "main.ypp"
-                                {std::cout << "def body command: "<<yystack_[0].value.as < std::string > () << std::endl;}
-#line 1038 "parser.cpp"
-    break;
-
-  case 32: // assign_stmt: WORD ASSIGN expr
-#line 160 "main.ypp"
-                              {yylhs.value.as < assign_type > () = {yystack_[2].value.as < std::string > (), yystack_[0].value.as < MULTI_TYPE > ()}; LOG_DEBUG( "assignment detected");}
-#line 1044 "parser.cpp"
-    break;
-
-  case 33: // expr: WORD
-#line 164 "main.ypp"
-                                    {if(s_ScratchTable.exists(yystack_[0].value.as < std::string > ())) yylhs.value.as < MULTI_TYPE > () = s_ScratchTable.get(yystack_[0].value.as < std::string > ()); else if(buildFile.exists(yystack_[0].value.as < std::string > ())) yylhs.value.as < MULTI_TYPE > () = buildFile.get(yystack_[0].value.as < std::string > ()); else error(yystack_[0].location, "Symbol " + yystack_[0].value.as < std::string > () + " not found");}
-#line 1050 "parser.cpp"
-    break;
-
-  case 34: // expr: NUMBER
-#line 165 "main.ypp"
-                                    {yylhs.value.as < MULTI_TYPE > () = yystack_[0].value.as < int > ();}
-#line 1056 "parser.cpp"
-    break;
-
-  case 35: // expr: STRING_LIT
-#line 166 "main.ypp"
-                                    {yylhs.value.as < MULTI_TYPE > () = yystack_[0].value.as < std::string > ();}
-#line 1062 "parser.cpp"
-    break;
-
-  case 36: // expr: expr ADD expr
-#line 167 "main.ypp"
-                                    {yylhs.value.as < MULTI_TYPE > () = add(yystack_[2].value.as < MULTI_TYPE > (), yystack_[0].value.as < MULTI_TYPE > ()); LOG_DEBUG("value after addition is " + toString(yylhs.value.as < MULTI_TYPE > ())); }
-#line 1068 "parser.cpp"
-    break;
-
-  case 37: // expr: expr MULTIPLY expr
-#line 168 "main.ypp"
-                                    {yylhs.value.as < MULTI_TYPE > () = multiply(yystack_[2].value.as < MULTI_TYPE > (), yystack_[0].value.as < MULTI_TYPE > ()); LOG_DEBUG("value after multiplication is " + toString(yylhs.value.as < MULTI_TYPE > ()));}
-#line 1074 "parser.cpp"
-    break;
-
-  case 38: // expr: expr DIVIDE expr
+  case 20: // assign_stmt: WORD ASSIGN expr
 #line 169 "main.ypp"
+                              {yylhs.value.as < assign_type > () = {yystack_[2].value.as < std::string > (), yystack_[0].value.as < MULTI_TYPE > ()}; LOG_DEBUG( "assignment detected");}
+#line 995 "parser.cpp"
+    break;
+
+  case 21: // expr: WORD
+#line 173 "main.ypp"
+                                    {if(s_ScratchTable.exists(yystack_[0].value.as < std::string > ())) yylhs.value.as < MULTI_TYPE > () = s_ScratchTable.get(yystack_[0].value.as < std::string > ()); else if(buildFile.exists(yystack_[0].value.as < std::string > ())) yylhs.value.as < MULTI_TYPE > () = buildFile.get(yystack_[0].value.as < std::string > ()); else error(yystack_[0].location, "Symbol " + yystack_[0].value.as < std::string > () + " not found");}
+#line 1001 "parser.cpp"
+    break;
+
+  case 22: // expr: NUMBER
+#line 174 "main.ypp"
+                                    {yylhs.value.as < MULTI_TYPE > () = yystack_[0].value.as < int > ();}
+#line 1007 "parser.cpp"
+    break;
+
+  case 23: // expr: STRING_LIT
+#line 175 "main.ypp"
+                                    {yylhs.value.as < MULTI_TYPE > () = yystack_[0].value.as < std::string > ();}
+#line 1013 "parser.cpp"
+    break;
+
+  case 24: // expr: expr ADD expr
+#line 176 "main.ypp"
+                                    {yylhs.value.as < MULTI_TYPE > () = add(yystack_[2].value.as < MULTI_TYPE > (), yystack_[0].value.as < MULTI_TYPE > ()); LOG_DEBUG("value after addition is " + toString(yylhs.value.as < MULTI_TYPE > ())); }
+#line 1019 "parser.cpp"
+    break;
+
+  case 25: // expr: expr MULTIPLY expr
+#line 177 "main.ypp"
+                                    {yylhs.value.as < MULTI_TYPE > () = multiply(yystack_[2].value.as < MULTI_TYPE > (), yystack_[0].value.as < MULTI_TYPE > ()); LOG_DEBUG("value after multiplication is " + toString(yylhs.value.as < MULTI_TYPE > ()));}
+#line 1025 "parser.cpp"
+    break;
+
+  case 26: // expr: expr DIVIDE expr
+#line 178 "main.ypp"
                                     {yylhs.value.as < MULTI_TYPE > () = divide(yystack_[2].value.as < MULTI_TYPE > (), yystack_[0].value.as < MULTI_TYPE > ()); LOG_DEBUG("value after division is " + toString(yylhs.value.as < MULTI_TYPE > ()));}
-#line 1080 "parser.cpp"
+#line 1031 "parser.cpp"
     break;
 
-  case 39: // expr: expr SUBTRACT expr
-#line 170 "main.ypp"
+  case 27: // expr: expr SUBTRACT expr
+#line 179 "main.ypp"
                                     {yylhs.value.as < MULTI_TYPE > () = subtract(yystack_[2].value.as < MULTI_TYPE > (), yystack_[0].value.as < MULTI_TYPE > ()); LOG_DEBUG("value after subtract is " + toString(yylhs.value.as < MULTI_TYPE > ()));}
-#line 1086 "parser.cpp"
+#line 1037 "parser.cpp"
     break;
 
 
-#line 1090 "parser.cpp"
+#line 1041 "parser.cpp"
 
             default:
               break;
@@ -1279,95 +1230,81 @@ namespace Beast {
 
 
 
-  const signed char Parser::yypact_ninf_ = -14;
+  const signed char Parser::yypact_ninf_ = -15;
 
   const signed char Parser::yytable_ninf_ = -1;
 
   const signed char
   Parser::yypact_[] =
   {
-     -14,     0,   -14,    -9,     5,   -14,    27,   -14,   -14,    25,
-     -14,    31,    32,    36,   -14,   -14,    -3,     3,   -14,   -14,
-     -14,   -14,     5,   -14,   -14,   -14,   -14,   -14,   -14,   -14,
-      16,   -13,     8,   -10,     3,     3,     3,     3,   -14,    -7,
-     -14,    18,   -14,    30,   -14,    30,    29,   -14,   -14,   -14,
-     -14,   -14,   -14,    40,   -14
+     -15,     0,   -15,   -15,   -15,    19,   -15,   -15,    18,    20,
+      -3,   -14,   -15,   -15,   -15,   -15,   -15,   -15,   -15,   -15,
+     -15,   -15,   -15,     9,    16,   -10,   -14,   -14,   -14,   -14,
+     -15,    -7,   -15,    17,   -15,    17,   -15,   -15
   };
 
   const signed char
   Parser::yydefact_[] =
   {
-       2,     0,     1,     0,    10,     7,     0,     3,     4,     0,
-       5,     0,     0,     0,    11,    12,     0,     0,    17,    26,
-       6,    25,    10,    14,    16,    13,    15,    33,    34,    35,
-      32,     8,    24,     9,     0,     0,     0,     0,    21,    22,
-      30,    31,    37,    36,    38,    39,     0,    18,    19,    20,
-      27,    28,    29,     0,    23
+       2,     0,     1,     9,     6,     0,     3,     4,     0,     0,
+       0,     0,    15,     5,     9,    11,    14,    12,    13,    10,
+      21,    22,    23,    20,     7,     8,     0,     0,     0,     0,
+      18,    19,    25,    24,    26,    27,    16,    17
   };
 
   const signed char
   Parser::yypgoto_[] =
   {
-     -14,   -14,   -14,   -14,   -14,    26,   -14,     9,   -14,   -14,
-     -14,     2,    -4
+     -15,   -15,   -15,   -15,   -15,    21,   -15,   -15,     1,    -4
   };
 
   const signed char
   Parser::yydefgoto_[] =
   {
-       0,     1,     7,     8,     9,    16,    31,    48,    10,    11,
-      32,    12,    30
+       0,     1,     6,     7,     8,    10,    19,    24,     9,    23
   };
 
   const signed char
   Parser::yytable_[] =
   {
-       2,    38,    39,     3,     4,    22,    23,    13,    24,    46,
-      25,    26,    47,    23,     5,    24,     6,    25,    26,    27,
-      28,    14,    40,    41,    29,    15,    34,    35,    36,    37,
-      42,    43,    44,    45,    46,    53,    17,    50,    17,    18,
-      34,    49,    36,    52,    21,    19,    20,    54,    33,     0,
-      51
+       2,    20,    21,     3,    14,    15,    22,    16,     5,    17,
+      18,    36,    15,     4,    16,     5,    17,    18,    26,    27,
+      28,    29,    32,    33,    34,    35,    26,    11,    28,    30,
+      31,    12,    37,    13,     0,    25
   };
 
   const signed char
   Parser::yycheck_[] =
   {
-       0,    14,    15,     3,     4,     8,    16,    16,    18,    16,
-      20,    21,    19,    16,    14,    18,    16,    20,    21,    16,
-      17,    16,    14,    15,    21,    20,    10,    11,    12,    13,
-      34,    35,    36,    37,    16,     6,     9,    19,     9,    14,
-      10,    39,    12,    41,     8,    14,    14,     7,    22,    -1,
-      41
+       0,    15,    16,     3,     7,    15,    20,    17,    15,    19,
+      20,    18,    15,    13,    17,    15,    19,    20,     9,    10,
+      11,    12,    26,    27,    28,    29,     9,     8,    11,    13,
+      14,    13,    31,    13,    -1,    14
   };
 
   const signed char
   Parser::yystos_[] =
   {
-       0,    23,     0,     3,     4,    14,    16,    24,    25,    26,
-      30,    31,    33,    16,    16,    20,    27,     9,    14,    14,
-      14,     8,     8,    16,    18,    20,    21,    16,    17,    21,
-      34,    28,    32,    27,    10,    11,    12,    13,    14,    15,
-      14,    15,    34,    34,    34,    34,    16,    19,    29,    33,
-      19,    29,    33,     6,     7
+       0,    22,     0,     3,    13,    15,    23,    24,    25,    29,
+      26,     8,    13,    13,     7,    15,    17,    19,    20,    27,
+      15,    16,    20,    30,    28,    26,     9,    10,    11,    12,
+      13,    14,    30,    30,    30,    30,    18,    29
   };
 
   const signed char
   Parser::yyr1_[] =
   {
-       0,    22,    23,    23,    24,    24,    24,    24,    25,    26,
-      27,    27,    27,    27,    27,    27,    27,    28,    28,    28,
-      28,    28,    28,    29,    30,    31,    32,    32,    32,    32,
-      32,    32,    33,    34,    34,    34,    34,    34,    34,    34
+       0,    21,    22,    22,    23,    23,    23,    24,    25,    26,
+      26,    27,    27,    27,    27,    28,    28,    28,    28,    28,
+      29,    30,    30,    30,    30,    30,    30,    30
   };
 
   const signed char
   Parser::yyr2_[] =
   {
-       0,     2,     0,     2,     1,     1,     2,     1,     3,     4,
-       0,     1,     1,     2,     2,     2,     2,     0,     3,     3,
-       3,     2,     2,     3,     3,     3,     0,     3,     3,     3,
-       2,     2,     3,     1,     1,     1,     3,     3,     3,     3
+       0,     2,     0,     2,     1,     2,     1,     3,     4,     0,
+       2,     1,     1,     1,     1,     0,     3,     3,     2,     2,
+       3,     1,     1,     1,     3,     3,     3,     3
   };
 
 
@@ -1377,12 +1314,12 @@ namespace Beast {
   const char*
   const Parser::yytname_[] =
   {
-  "\"end of file\"", "error", "\"invalid token\"", "DEF", "BUILD",
-  "QUOTE", "SBRAC", "EBRAC", "COLON", "ASSIGN", "MULTIPLY", "ADD",
-  "DIVIDE", "SUBTRACT", "ENDL", "TAB", "WORD", "NUMBER", "DEREF",
-  "COMMAND", "FILENAME", "STRING_LIT", "$accept", "stmts", "stmt",
-  "build_grp", "build_head", "build_head_file_list", "build_cmds",
-  "func_call", "def_grp", "def_head", "def_body", "assign_stmt", "expr", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "BUILD", "QUOTE",
+  "SBRAC", "EBRAC", "COLON", "ASSIGN", "MULTIPLY", "ADD", "DIVIDE",
+  "SUBTRACT", "ENDL", "TAB", "WORD", "NUMBER", "DEREF", "COMMAND",
+  "FILENAME", "STRING_LIT", "$accept", "stmts", "stmt", "build_grp",
+  "build_head", "build_head_file_list", "file", "build_cmds",
+  "assign_stmt", "expr", YY_NULLPTR
   };
 #endif
 
@@ -1391,10 +1328,9 @@ namespace Beast {
   const unsigned char
   Parser::yyrline_[] =
   {
-       0,    86,    86,    87,    91,    92,    93,    94,    98,   111,
-     121,   122,   123,   124,   125,   126,   127,   130,   131,   132,
-     133,   134,   135,   139,   143,   147,   150,   151,   152,   153,
-     154,   155,   160,   164,   165,   166,   167,   168,   169,   170
+       0,    87,    87,    88,    92,    94,    95,    99,   112,   122,
+     123,   133,   134,   135,   136,   139,   140,   142,   143,   144,
+     169,   173,   174,   175,   176,   177,   178,   179
   };
 
   void
@@ -1460,10 +1396,10 @@ namespace Beast {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21
+      15,    16,    17,    18,    19,    20
     };
     // Last valid token kind.
-    const int code_max = 276;
+    const int code_max = 275;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -1475,15 +1411,14 @@ namespace Beast {
 
 #line 26 "main.ypp"
 } // Beast
-#line 1479 "parser.cpp"
+#line 1415 "parser.cpp"
 
-#line 188 "main.ypp"
+#line 197 "main.ypp"
 
 
 
 void Beast::Parser::error(const location_type& loc, const std::string& msg) {
-	//std::cout << loc.begin.line << std::endl;
-    RAISE_ERROR_AND_EXIT("parse error at line " + std::to_string(loc.begin.line) + ": " + msg, -1);
+    RAISE_ERROR_AND_EXIT("parse error at line " + std::to_string(loc.begin.line) + ": " + msg, 1);
 }
 
 #ifdef PARSER_TEST
@@ -1518,7 +1453,7 @@ namespace Beast {
 			yyset_in(inputFile_pointer, scanner);
 		}
 		else{
-			RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, -1);
+			RAISE_ERROR_AND_EXIT("couldn't open file " + inputFile, 10);
 		}
 		Beast::Parser parser{scanner, buildFile, loc};
 		#if YYDEBUG == 1

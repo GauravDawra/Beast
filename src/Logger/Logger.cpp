@@ -10,9 +10,17 @@ namespace Beast {
 	const std::string Logger::m_HeadPrefix = "beast";
 	
 	void Logger::log(const std::string& msg, LogLevel level) {
-		std::stringstream ss; // to
-		ss << m_HeadPrefix << ": " << getPrefixOfLevel(level) << msg << std::endl;
-		std::cout << ss.str();
+		std::stringstream ss; // to make output thread safe
+		if (level == PLAIN) { // plain is simple print
+			ss << msg << std::endl;
+		}
+		else {                // all outputs that will contain the "beast" header
+			ss << m_HeadPrefix << ": " << getPrefixOfLevel(level) << msg << std::endl;
+		}
+		if (level == ERROR)
+			std::cerr << ss.str();
+		else
+			std::cout << ss.str();
 	}
 	
 	std::string Logger::getPrefixOfLevel(Logger::LogLevel level) {

@@ -24,7 +24,7 @@ namespace Beast {
 //		#elif __GNUC__
 //	        m_LastModified = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(writeTime));
 //		#else
-//            RAISE_ERROR_AND_EXIT("Unsopported compiler", -1);
+//            RAISE_ERROR_AND_EXIT("Unsupported compiler", -1);
 //		#endif
             // m_LastModified = decltype(writeTime)::clock::to_time_t(writeTime);
 			// // different options to turn last_write_time into time_t
@@ -45,9 +45,15 @@ namespace Beast {
         }
     }
     FileSystem::FileSystem(const BuildFile &buildFile) : m_Size(0) {
-        for (const BuildRule& rule : buildFile.getRules()) {
-            const std::string& output = rule.getOutputTarget();
-            addFile(output);
+    	// not for this constructor, this constructor needs to ensure that
+    	// there is an identity mapping between buildFile's BuildRule's and
+    	// FileSystem's File's
+    	const std::vector<BuildRule>& rules = buildFile.getRules();
+    	m_Files.reserve(rules.size());
+    	for (BuildFile::index_t i = 0; i < rules.size(); i++) {
+    		addFile(rules[i].getOutputTarget());
+    	} // this will ensure identity mapping between BuildFile rules and FileSystem files
+        for (const BuildRule& rule : rules) {
             for (const std::string& input : rule.getInputTargets()) {
                 addFile(input);
             }
@@ -82,11 +88,11 @@ namespace Beast {
     	}
     }
     
-    void FileSystem::addFile(const std::string& fileName) {
-        if (m_Index.find(fileName) == m_Index.end()) {
-            m_Index[fileName] = m_Size++;
-            m_Files.push_back(new File(fileName));
-        }
+    void FileSystem::addFile(const std::string& fileName, index_t index) {
+	    if (m_Index.find(fileName) == m_Index.end()) {
+		    m_Index[fileName] = m_Size++;
+		    m_Files.push_back(new File(fileName));
+	    }
     }
 
     FileSystem::constFileRef FileSystem::getReference(const std::string &fileName) const {

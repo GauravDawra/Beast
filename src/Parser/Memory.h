@@ -12,9 +12,12 @@ namespace Beast {
     class SymbolTable {
     public:
         using iterator = typename std::map<std::string, MULTI_TYPE>::const_iterator;
+        using DEFAULT_TABLE = SymbolTable();
+        SymbolTable();
         MULTI_TYPE get(const std::string& key) const;
         void set(const std::string& key, const MULTI_TYPE& value);
         bool exists(const std::string& key) const;
+        void resolve(std::string &name, const SymbolTable& baseTable) const;
         inline void clear() {
             m_LookupTree.clear();
         }
@@ -62,7 +65,7 @@ namespace Beast {
     class BuildRule : public SymbolTable {
     public:
         void addCommand(const std::string& command);
-        void setDependencies(const std::string& output, const std::vector<std::string>& inputs);
+	        void setDependencies(const std::string& output, const std::vector<std::string>& inputs);
         inline void setCommands(const std::vector<std::string>& commands) {
 			LOG_DEBUG("setting commands for " + getOutputTarget());
             m_Commands = commands;
@@ -83,26 +86,39 @@ namespace Beast {
         inline const std::vector<std::string>& getCommands() const {
             return m_Commands;
         }
+        inline bool isBuilt() const {
+        	return m_Built;
+        }
         void resolveCommands(const SymbolTable& baseTable);
+        std::string build(int &exitStatus) const;
     private:
 	    std::string m_OutputTarget;
 	    std::vector<std::string> m_InputTargets;
 	    std::vector<std::string> m_Commands;
-	    void resolveCommand(const SymbolTable& baseTable, std::string& command);
+	    mutable bool m_Built = false;
     };
     
     class BuildFile : public SymbolTable {
     public:
+    	using ruleRef      = BuildRule*;
+    	using constRuleRef = const BuildRule*;
+    	using index_t      = int32_t;
         BuildFile();
 	    void addBuildRule(const BuildRule& rule);
 	    void resolveBuildRules();
 	    inline const std::vector<BuildRule>& getRules() const {
             return m_BuildRules;
         }
-	    const BuildRule* getRule(const std::string& output) const;
+        
+        index_t index(const std::string& output) const;
+        constRuleRef getRule(const std::string& output) const;
+        constRuleRef getRule(const index_t& index) const;
+	    inline index_t numRules() const {
+		    return m_BuildRules.size();
+	    }
     private:
         std::vector<BuildRule> m_BuildRules;
-        std::map<std::string, int> m_Index;
+        std::map<std::string, index_t> m_Index;
     };
 
     // class Function {

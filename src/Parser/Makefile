@@ -1,6 +1,6 @@
 
 CXX ?= g++
-include_dirs = ./ ../Logger
+include_dirs = ./ ../Logger ../ShellInterface
 FLAGS = -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 
 ifeq ("$(MODE)", "RELEASE")

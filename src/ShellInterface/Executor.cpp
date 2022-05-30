@@ -8,6 +8,7 @@
 #include "Error.h"
 #include <iostream>
 //#include <omp.h> // bye bye omp for now :)
+
 namespace Beast::Builder {
 	
 	void setEnvironmentVariables(const SymbolTable &env) {
@@ -16,36 +17,10 @@ namespace Beast::Builder {
 		}
 	}
 	
-	static std::string buildRule(const BuildRule& rule, int& exitStatus) {
-		// first set the variables local to the rule
-//		std::vector<std::pair<std::string, std::string> > patch;
-//		patch.reserve(rule.getCommands().size());
-//		for (SymbolTable::iterator it = rule.begin(); it != rule.end(); it++) {
-//			if (const char* val = std::getenv(toString(it->first).c_str())) {
-//				patch.emplace_back(toString(it->first), std::string(val));
-//			}
-//			else {
-//				patch.emplace_back(toString(it->first), "");
-//			}
-//		}
-//		setEnvironmentVariables(rule);
-
-		// run the commands
-		std::string output = executeCommands(rule.getCommands(), exitStatus);
-//		// reverse tha value of the local variables
-//		for (auto& [key, value] : patch) {
-//
-//			if (value.length()) {
-//				setenv(key.c_str(), value.c_str(), 1);
-//			}
-//			else {
-//				// consider using unsetenv()
-//				std::cout << key << " at the end of buildRule " <<patch.size() <<  std::endl;
-//				setenv(key.c_str(), NULL, 1);
-//			}
-//		}
-		return output;
-	}
+//	static std::string buildRule(const BuildRule& rule, int& exitStatus) {
+//		std::string output = executeCommands(rule.getCommands(), exitStatus);
+//		return output;
+//	}
 	
 	// sequential build
 	int build(const BuildFile& buildFile, const FileSystem& fileSystem, Graph& fileGraph) {
@@ -55,45 +30,64 @@ namespace Beast::Builder {
 		}
 		int exitStatus = 0;
 		for (Graph::index_t index : fileGraph.getSorted()) {
-//			FileSystem::fileRef file = fileSystem.getReference(index);
-//			auto rule = buildFile.getRule(file->name());
-//			if (rule == nullptr and !file->exists()) {
-//				RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
-//				return -1;
-//			}
-//			if (rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
-//				continue; // just move on
-//			}
-//			LOG_DEBUG("executing commands for file " + file->name());
-//			std::cout << buildRule(*rule, exitStatus);
-//			if (exitStatus) {
-//				RAISE_ERROR("Problem in building rule \"" + rule->getOutputTarget() + "\"");
-//				return exitStatus;
-//			}
-//			file->refresh();    // refresh time stamp
 			if((exitStatus = checkAndBuild(index, buildFile, fileSystem))) {
 				return exitStatus;
 			}
-			
 		}
 		return exitStatus;
 	}
 	
+	bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem) {
+		FileSystem::constFileRef outputTarget = fileSystem.getReference(rule.getOutputTarget());
+		if (!outputTarget->exists()) {
+			// if the file doesn't exist, always build it
+			return true;
+		}
+		auto outStamp = outputTarget->timeStamp();
+		for (const std::string& inputFile : rule.getInputTargets()) {
+			if (fileSystem.getReference(inputFile)->timeStamp() > outStamp) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	int checkAndBuild(const FileSystem::index_t& target, const BuildFile& buildFile, const FileSystem& fileSystem) {
-//		int indexFile = fileSystem.index(target);
-		auto file = fileSystem.getReference(target); // might use file Index instead of string later
-		auto rule = buildFile.getRule(file->name());
-//		std::cout << target <<": "<<file->name() << std::endl;
-		if(rule == nullptr and !file->exists()) {
-			RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
-			return -1;
+		auto rule = buildFile.getRule(target);
+		if (rule == nullptr) return 0; // originally it was with the timestamp check below
+		auto file = fileSystem.getReference(target);
+		
+//		if(rule == nullptr and !file->exists()) {
+//			RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
+//			return -1;
+//		} // now handled by buildGraph() // may change later
+		
+//		if (!checkTimeStamps(*rule, fileSystem))
+//			return 0;
+//
+		if (file->exists()) {
+			auto outStamp = file->timeStamp();
+			auto inputTargets = rule->getInputTargets();
+			bool buildTarget = false;
+			for (int i = 0; i < inputTargets.size(); i++) {
+				auto inputRule = buildFile.getRule(inputTargets[i]);
+				if ((inputRule && inputRule->isBuilt()) ||
+					fileSystem.getReference(inputTargets[i])->timeStamp() > outStamp) {
+					buildTarget = true;
+					break;
+				}
+			}
+			if (!buildTarget) return 0;
 		}
-		if(rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
-			// no need to build
-			return 0;
-		}
+//		if(rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
+//			// no need to build
+//			return 0;
+//		}
+		
+		// if control reaches this point, then the rule is surely being built
+		LOG("Building rule " + file->name());
 		int exitStatus = 0;
-		std::cout << buildRule(*rule, exitStatus);
+		std::cout << rule->build(exitStatus);
 		if(exitStatus){
 			RAISE_ERROR("Problem in building rule \"" + file->name() + "\"");
 			return exitStatus;

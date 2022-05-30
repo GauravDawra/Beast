@@ -6,6 +6,8 @@
 
 #include "Memory.h"
 #include "Shell.h"
+#include "Filesystem.h"
+#include "Graph.h"
 
 namespace Beast::Builder {
 	void setEnvironmentVariables(const SymbolTable& env);
