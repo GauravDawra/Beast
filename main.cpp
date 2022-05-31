@@ -54,7 +54,6 @@ int main(int argc, char* argv[]) {
     if (numThreads == 1) {
         Beast::Graph fileGraph(fileSystem.size());
 	    Beast::buildGraph(fileSystem, buildFile, fileGraph);
-//	    fileGraph.topologicalSort(); // already done in build()
 	    LOG_DEBUG("graph built and sorted");
 		LOG_DEBUG("Starting build");
 	    int es = Beast::Builder::build(buildFile, fileSystem, fileGraph);

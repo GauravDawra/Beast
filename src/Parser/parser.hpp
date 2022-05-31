@@ -45,7 +45,7 @@
 #ifndef YY_YY_PARSER_HPP_INCLUDED
 # define YY_YY_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 35 "main.ypp"
+#line 36 "main.ypp"
 
     #include <vector>
     #include <iostream>
@@ -102,7 +102,7 @@
 #else
 # define YY_CONSTEXPR
 #endif
-
+# include "location.hh"
 
 
 #ifndef YY_ATTRIBUTE_PURE
@@ -1565,7 +1565,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 35,     ///< Last index in yytable_.
+      yylast_ = 37,     ///< Last index in yytable_.
       yynnts_ = 10,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
@@ -1585,7 +1585,7 @@ switch (yykind)
 
 
 // "%code provides" blocks.
-#line 47 "main.ypp"
+#line 48 "main.ypp"
 
     #define YY_DECL \
         int yylex(Beast::Parser::semantic_type *yylval, Beast::Parser::location_type* loc, yyscan_t yyscanner)

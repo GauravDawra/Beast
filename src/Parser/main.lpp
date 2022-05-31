@@ -23,10 +23,13 @@ int line_num = 1;
 
 
 /*"def"                     return token::DEF;*/
+
+%s sc_BUILD
+
 %%
 
 
-"build"                   return token::BUILD;
+"build"                   BEGIN(sc_BUILD); return token::BUILD;
 [a-zA-Z][a-zA-Z0-9_]*    yylval->emplace<std::string>(yytext); return token::WORD;
 [0-9]+                  yylval->emplace<int>(atoi(yytext)); return token::NUMBER;
 "\""                      return token::QUOTE;
@@ -39,10 +42,11 @@ int line_num = 1;
 "/"                       return token::DIVIDE;
 "-"                       return token::SUBTRACT;
 \"[^\"]*\"                   yytext[strlen(yytext)-1]='\0'; yylval->emplace<std::string>(yytext + 1); return token::STRING_LIT;
-[^ \n\t]*            yylval->emplace<std::string>(yytext); return token::FILENAME;
+<INITIAL>#([^\n])*                   {printf("comment: %s\n", yytext);}
 \$[a-zA-Z][a-zA-Z0-9_]*     yylval->emplace<std::string>(yytext + 1); return token::DEREF;
 \![ ]*([^\n])*              yylval->emplace<std::string>(yytext + 1); return token::COMMAND;
-"\n"                      { loc->lines(yyleng); loc->step(); line_num++; return token::ENDL;}
+<sc_BUILD>[^ \n\t:]*                 yylval->emplace<std::string>(yytext); return token::FILENAME;
+"\n"                      { BEGIN(INITIAL); loc->lines(yyleng); loc->step(); line_num++; return token::ENDL;}
 " "                  /* ignore whitespace */;
 "\t"                    return token::TAB;
 .                    return (int)yytext[0];
