@@ -6,6 +6,7 @@
 #include <array>
 #include <stdio.h>
 #include "Error.h"
+#include <sys/wait.h>
 //#include <iostream>
 namespace Beast {
 
