@@ -221,6 +221,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
 #define sc_BUILD 1
+#define sc_WORD 2
 
 #endif
 
@@ -482,9 +483,9 @@ extern int yylex (yyscan_t yyscanner);
 #undef yyTABLES_NAME
 #endif
 
-#line 54 "main.lpp"
+#line 55 "main.lpp"
 
 
-#line 488 "scanner.h"
+#line 489 "scanner.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

@@ -24,31 +24,32 @@ int line_num = 1;
 
 /*"def"                     return token::DEF;*/
 
-%s sc_BUILD
+%s sc_BUILD sc_WORD
 
 %%
 
 
-"build"                   BEGIN(sc_BUILD); return token::BUILD;
-[a-zA-Z][a-zA-Z0-9_]*    yylval->emplace<std::string>(yytext); return token::WORD;
+"build"                   BEGIN(sc_BUILD);  return token::BUILD;
+<INITIAL,sc_WORD>[a-zA-Z][a-zA-Z0-9_]*     BEGIN(sc_WORD); yylval->emplace<std::string>(yytext); return token::WORD;
 [0-9]+                  yylval->emplace<int>(atoi(yytext)); return token::NUMBER;
 "\""                      return token::QUOTE;
 "("                       return token::SBRAC;
 ")"                       return token::EBRAC;
-":"                       return token::COLON;
+<sc_BUILD>":"                       return token::COLON;
 "="                       return token::ASSIGN;
 "*"                      return token::MULTIPLY;
 "+"                      return token::ADD;
 "/"                       return token::DIVIDE;
 "-"                       return token::SUBTRACT;
 \"[^\"]*\"                   yytext[strlen(yytext)-1]='\0'; yylval->emplace<std::string>(yytext + 1); return token::STRING_LIT;
-<INITIAL>#([^\n])*                   {}
-\$[a-zA-Z][a-zA-Z0-9_]*     yylval->emplace<std::string>(yytext + 1); return token::DEREF;
+<INITIAL,sc_WORD>#([^\n])*                   {} // comments (single line using #)
+\$[a-zA-Z][a-zA-Z0-9_]*     yylval->emplace<std::string>(yytext); return token::DEREF;
 \![ ]*([^\n])*              yylval->emplace<std::string>(yytext + 1); return token::COMMAND;
 <sc_BUILD>[^ \n\t:]*                 yylval->emplace<std::string>(yytext); return token::FILENAME;
 "\n"                      { BEGIN(INITIAL); loc->lines(yyleng); loc->step(); line_num++; return token::ENDL;}
 " "                  /* ignore whitespace */;
-"\t"                    return token::TAB;
+<sc_BUILD,sc_WORD>"\t"              {}
+<INITIAL>"\t"                    return token::TAB;
 .                    return (int)yytext[0];
 
 %%

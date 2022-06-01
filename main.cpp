@@ -1,5 +1,4 @@
 #include "Filesystem.h"
-#include <iostream>
 #include <vector>
 #include "scanner.h"
 #include "parser.hpp"
@@ -22,7 +21,6 @@ int main(int argc, char* argv[]) {
 #ifdef BEAST_DEBUG
     auto t = std::chrono::high_resolution_clock::now();
 #endif
-	
 	signed short numThreads = 1;
 	std::string buildFileDirectory;
 	cxxopts::Options CLIoptions(argv[0]);
@@ -39,7 +37,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	if (result.count("help")) { // print help
-		std::cout << CLIoptions.help() << std::endl;
+		LOG_PLAIN(CLIoptions.help());
 		exit(0);
 	}
 	
