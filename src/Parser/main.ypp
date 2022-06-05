@@ -143,7 +143,7 @@ build_cmds:
     /* | build_cmds TAB func_call   {} // wrong for now... temporary */
     | build_cmds TAB assign_stmt {s_ScratchTable.set($3.first, $3.second);}
     | build_cmds ENDL
-    /* | build_cmds TAB */
+    | build_cmds TAB
     ;
 /* 
 func_call:

@@ -47,11 +47,12 @@ int line_num = 1;
 \![ ]*([^\n])*              yylval->emplace<std::string>(yytext + 1); return token::COMMAND;
 <sc_BUILD>[^ \n\t:]*                 yylval->emplace<std::string>(yytext); return token::FILENAME;
 "\n"                      { BEGIN(INITIAL); loc->lines(yyleng); loc->step(); line_num++; return token::ENDL;}
-" "                  /* ignore whitespace */;
-<sc_BUILD,sc_WORD>"\t"              {}
-<INITIAL>"\t"                    return token::TAB;
+<INITIAL>[" "\t]+                   return token::TAB/* ignore whitespace */;
+<sc_BUILD,sc_WORD>" "+           ;  
+<sc_BUILD,sc_WORD>"\t"+              {}
 .                    return (int)yytext[0];
 
 %%
 
+// <INITIAL>"\t"+                    return token::TAB;
 // [a-zA-Z0-9\/.-]*\.[a-zA-Z0-9\.-]+    -> previous file regex
