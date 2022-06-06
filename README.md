@@ -66,7 +66,7 @@ Follow these steps to compile:
     
     This is a root action so you will have to enter your password for this step. If you don't want to install this to your */usr/local/bin*, you can directly use the *beast* binary.
 
-## Getting started with ***Beast***
+## <p id="getting-started">Getting started with ***Beast***</p>
 Beast has a very simple to follow Quickstart which helps you use Beast in a sample project. This quickstart can be found in the [quickstart repository](https://github.com/GauravDawra/Beast-quickstart) or in the documentation [Quickstart](https://gauravdawra.github.io/Beast-docs/quickStart/beast-quickstart) page.
 
 It contains a very easy to follow tutorial. To learn more about what is going on in the *beast.build* file provided with the quickstart repository, see [Writing a Beast file](https://gauravdawra.github.io/Beast-docs/mainDocs/writingABeastFile).
