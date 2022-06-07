@@ -97,11 +97,11 @@ For a hands on tutorial on building a sample project, look at [Quickstart](https
 Beast uses the Apache-2.0 license. Please read the [license](https://github.com/GauravDawra/Beast/blob/master/LICENSE) carefully.
 
 ## <p id="contribution">Contribution</p>
-Beast is primarily written in C++ for speed and optimizations. You can easily contribute to Beast by making a pull request. Although, it is advised to contact me before making a pull request. For more details about contribution check out [Contribution](https://gauravdawra.github.io/Beast-docs/mainDocs/contribution) in the official documentation.
+Beast is primarily written in C++ for speed and optimizations. You can easily contribute to Beast by making a pull request. Although, it is advised to contact me before making a pull request. For more details about contribution check out [Contribution](https://gauravdawra.github.io/Beast-docs/contribute/) in the official documentation.
 
 See [Support](#support) for contact details.
 
 ## <p id="support"> Support </p>
-For any kind of bugs and feature requests it is adviced to use Github issues. But you can also join the official [mailing list]((https://groups.google.com/g/beast-build)) and drop an email at beast-build@googlegroups.com once you are a member, for any kind of support. You can also email me directly at gaurav19039@iiitd.ac.in.
+For any kind of bugs and feature requests it is adviced to use Github issues. But you can also join the official [mailing list](https://groups.google.com/g/beast-build) and drop an email at beast-build@googlegroups.com once you are a member, for any kind of support. You can also email me directly at gaurav19039@iiitd.ac.in.
 
 ### *Great!!! You are all set to start using Beast. Go ahead and unleash the Beast!!!*
