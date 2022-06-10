@@ -1,6 +1,8 @@
 #include "Error.h"
 #include "Memory.h"
 #include "Shell.h"
+#include "DepFileParser.h"
+#include <iostream>
 
 namespace Beast {
 
@@ -89,6 +91,21 @@ namespace Beast {
 		}
     }
     
+	void BuildRule::resolveDepFile() {
+		if (exists("dep")) {
+
+			std::vector<std::string> depFiles;
+			if(parseDepFile(toString(get("dep")), m_OutputTarget, depFiles)) {
+				for (const auto& file : depFiles) {
+					if (file.length()) {
+						m_InputTargets.push_back(file);
+					}
+				}
+			}
+			
+		}
+	}
+	
 	void BuildRule::resolveCommands(const SymbolTable &baseTable) {
     	for (std::string& command : m_Commands) {
 		    resolve(command, baseTable);
@@ -163,9 +180,15 @@ namespace Beast {
     }
 	
 	void BuildFile::resolveBuildRules() {
+		// this function defines what protocol needs to be followed while
+		// resolving Build rules, like adding dependencies given in .d files
+		// resolving variable dereferences etc.
+
     	for(BuildRule& rule : m_BuildRules) {
-    		rule.resolveCommands(*this);
+		    rule.resolveDepFile();
+		    rule.resolveCommands(*this);
     	}
+
     }
 	
 	BuildFile::index_t BuildFile::index(const std::string& output) const {

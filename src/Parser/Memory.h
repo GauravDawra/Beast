@@ -65,13 +65,17 @@ namespace Beast {
     class BuildRule : public SymbolTable {
     public:
         void addCommand(const std::string& command);
-	        void setDependencies(const std::string& output, const std::vector<std::string>& inputs);
+        void setDependencies(const std::string& output, const std::vector<std::string>& inputs);
         inline void setCommands(const std::vector<std::string>& commands) {
 			LOG_DEBUG("setting commands for " + getOutputTarget());
             m_Commands = commands;
             LOG_DEBUG( "Number of commands in " + getOutputTarget() + ": " + std::to_string(m_Commands.size()));
         }
-
+        
+//		inline void addInputTarget(const std::string& target) {
+//            m_InputTargets.push_back(target);
+//        }
+        
         inline void setTable(const SymbolTable& table) {
             changeTable(table);
         }
@@ -89,6 +93,7 @@ namespace Beast {
         inline bool isBuilt() const {
         	return m_Built;
         }
+        void resolveDepFile();
         void resolveCommands(const SymbolTable& baseTable);
         std::string build(int &exitStatus) const;
     private:

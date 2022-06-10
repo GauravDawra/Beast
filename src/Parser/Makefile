@@ -9,7 +9,7 @@ endif
 
 OBJ_DIR = ./bin_int
 
-all: scanner.cpp parser.cpp $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o parser.o
+all: scanner.cpp parser.cpp $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o $(OBJ_DIR)/DepFileParser.o parser.o
 
 scanner.cpp: main.lpp
 	flex main.lpp
@@ -17,7 +17,7 @@ scanner.cpp: main.lpp
 parser.cpp: main.ypp
 	bison main.ypp
 
-CPP = parser.cpp scanner.cpp Memory.cpp variable_type.cpp
+CPP = parser.cpp scanner.cpp Memory.cpp variable_type.cpp DepFileParser.cpp
 
 OBJ = $(CPP:%.cpp=$(OBJ_DIR)/%.o)
 DEP = $(OBJ:%.o=%.d)
@@ -47,6 +47,9 @@ parser.o: $(OBJ) #$(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/variable_t
 #	${CC} ${FLAGS} $(OBJ_DIR)/variable_type.o scanner.cpp parser.cpp Memory.cpp -DPARSER_TEST -o ./build/main
 # 	${CC} -std=c++2a variable_type.cpp scanner.cpp parser.cpp Memory.cpp test.cpp -o ./build/main
 #	echo "main created"
+
+$(OBJ_DIR)/DepFileParser.o : DepFileParser.cpp | $(OBJ_DIR)
+	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 # run: main
 #	./build/main < beast.build
