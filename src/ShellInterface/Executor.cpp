@@ -65,14 +65,14 @@ namespace Beast::Builder {
 //		if (!checkTimeStamps(*rule, fileSystem))
 //			return 0;
 //
-		if (file->exists()) {
+		if (!rule->toBuild() && file->exists()) {
 			auto outStamp = file->timeStamp();
 			auto inputTargets = rule->getInputTargets();
 			bool buildTarget = false;
 			for (int i = 0; i < inputTargets.size(); i++) {
 				auto inputRule = buildFile.getRule(inputTargets[i]);
 				if ((inputRule && inputRule->isBuilt()) ||
-					fileSystem.getReference(inputTargets[i])->timeStamp() > outStamp) {
+					fileSystem.getReference(inputTargets[i])->timeStamp() > outStamp) { // this last condition is now never going to be because of m_ToBuild in build rules
 					buildTarget = true;
 					break;
 				}

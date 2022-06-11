@@ -61,7 +61,7 @@ namespace Beast {
 		std::map<std::string, index_t> m_Index;
 		std::vector<fileRef> m_Files;
 		index_t m_NumTargets;
-		void addFile(const std::string& fileName, index_t index = -1);
+		index_t addFile(const std::string& fileName, index_t index = -1);
 	};
 
 }

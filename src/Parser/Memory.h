@@ -89,6 +89,12 @@ namespace Beast {
         inline bool isBuilt() const {
         	return m_Built;
         }
+        inline void setToBuild() const {
+        	m_ToBuild = true;
+        }
+        inline bool toBuild() const {
+        	return m_ToBuild;
+        }
         void resolveDepFile();
         void resolveCommands(const SymbolTable& baseTable);
         std::string build(int &exitStatus) const;
@@ -97,6 +103,7 @@ namespace Beast {
 	    std::vector<std::string> m_InputTargets;
 	    std::vector<std::string> m_Commands;
 	    mutable bool m_Built = false;
+	    mutable bool m_ToBuild = false;
     };
     
     class BuildFile : public SymbolTable {

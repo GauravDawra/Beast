@@ -54,9 +54,13 @@ namespace Beast {
     		addFile(rules[i].getOutputTarget());
     	} // this will ensure identity mapping between BuildFile rules and FileSystem files
     	m_NumTargets = rules.size();
-        for (const BuildRule& rule : rules) {
-            for (const std::string& input : rule.getInputTargets()) {
-                addFile(input);
+        for (BuildFile::index_t i = 0; i < rules.size(); i++) {
+        	auto outStamp = getReference(i)->timeStamp();
+            for (const std::string& input : rules[i].getInputTargets()) {
+                auto inputIndex = addFile(input);
+                if (getReference(inputIndex)->timeStamp() > outStamp) {
+                	rules[i].setToBuild();
+                }
             }
         }
     }
@@ -89,11 +93,14 @@ namespace Beast {
     	}
     }
     
-    void FileSystem::addFile(const std::string& fileName, index_t index) {
-	    if (m_Index.find(fileName) == m_Index.end()) {
+    FileSystem::index_t FileSystem::addFile(const std::string& fileName, index_t index) {
+    	auto it = m_Index.find(fileName);
+	    if (it == m_Index.end()) {
 		    m_Index[fileName] = m_Size++;
 		    m_Files.push_back(new File(fileName));
+		    return m_Size - 1; // NOT THREAD SAFE
 	    }
+	    return it->second;
     }
 
     FileSystem::constFileRef FileSystem::getReference(const std::string &fileName) const {
