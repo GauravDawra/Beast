@@ -6,7 +6,7 @@
 #include <array>
 #include <stdio.h>
 #include "Error.h"
-//#include <sys/wait.h>
+#include <sys/wait.h>
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
