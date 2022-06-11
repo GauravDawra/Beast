@@ -71,8 +71,9 @@ namespace Beast::Builder {
 			bool buildTarget = false;
 			for (int i = 0; i < inputTargets.size(); i++) {
 				auto inputRule = buildFile.getRule(inputTargets[i]);
-				if ((inputRule && inputRule->isBuilt()) ||
-					fileSystem.getReference(inputTargets[i])->timeStamp() > outStamp) { // this last condition is now never going to be because of m_ToBuild in build rules
+				if ((inputRule && inputRule->isBuilt())){
+//				|| fileSystem.getReference(inputTargets[i])->timeStamp() > outStamp) { // this last condition is now never going to be because of m_ToBuild in build rules
+
 					buildTarget = true;
 					break;
 				}
