@@ -10,18 +10,13 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
-//#include <stdio.h>
-//#include <signal.h>
-//#include <string.h>
-//#include <sys/wait.h>
-//#include <iostream>
+
 using namespace std;
 namespace Beast {
 
 	#define READ   0
 	#define WRITE  1
-	FILE* shellRun(const string& command, int& pid)
-	{
+	FILE* shellRun(const string& command, int& pid) {
 		pid_t child_pid;
 		int fd[2];
 		pipe(fd);
@@ -35,14 +30,14 @@ namespace Beast {
 		
 		/* child process */
 		if (child_pid == 0){
-			close(fd[0]);    //Close the READ end of the pipe since the child's fd is write-only
-			dup2(fd[1], 1); //Redirect stdout to pipe
+			close(fd[0]);
+			dup2(fd[1], 1);
 			setpgid(child_pid, child_pid); //Needed so negative PIDs can kill children of /bin/sh
 			execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
 			exit(0);
 		}
-		else{
-			close(fd[1]); //Close the WRITE end of the pipe since parent's fd is read-only
+		else {
+			close(fd[1]);
 		}
 		
 		pid = child_pid;

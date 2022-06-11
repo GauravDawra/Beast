@@ -37,7 +37,7 @@ namespace Beast::Builder {
 		return exitStatus;
 	}
 	
-	bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem) {
+	bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem) { // not used
 		FileSystem::constFileRef outputTarget = fileSystem.getReference(rule.getOutputTarget());
 		if (!outputTarget->exists()) {
 			// if the file doesn't exist, always build it
@@ -87,12 +87,13 @@ namespace Beast::Builder {
 		// if control reaches this point, then the rule is surely being built
 		LOG("Building rule " + file->name());
 		int exitStatus = 0;
-		std::cout << rule->build(exitStatus);
+		printf("%s", rule->build(exitStatus).c_str());
+//		std::cout << rule->build(exitStatus);
 		if(exitStatus){
 			RAISE_ERROR("Problem in building rule \"" + file->name() + "\"");
 			return exitStatus;
 		}
-		file->refresh();
+//		file->refresh();
 		return 0;
 	}
 }

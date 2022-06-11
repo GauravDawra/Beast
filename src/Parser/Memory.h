@@ -72,10 +72,6 @@ namespace Beast {
             LOG_DEBUG( "Number of commands in " + getOutputTarget() + ": " + std::to_string(m_Commands.size()));
         }
         
-//		inline void addInputTarget(const std::string& target) {
-//            m_InputTargets.push_back(target);
-//        }
-        
         inline void setTable(const SymbolTable& table) {
             changeTable(table);
         }
@@ -125,13 +121,4 @@ namespace Beast {
         std::vector<BuildRule> m_BuildRules;
         std::map<std::string, index_t> m_Index;
     };
-
-    // class Function {
-    // public:
-        
-    // private:
-    //     SymbolTable m_LocalVariables;
-    //     std::vector<Command> m_Commands;
-    // };
-
 }
