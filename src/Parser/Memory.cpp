@@ -2,7 +2,6 @@
 #include "Memory.h"
 #include "Shell.h"
 #include "DepFileParser.h"
-#include <iostream>
 
 namespace Beast {
 

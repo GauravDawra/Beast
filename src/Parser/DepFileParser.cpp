@@ -5,13 +5,9 @@
 #include "DepFileParser.h"
 #include <sstream>
 #include <fstream>
-#include <iostream>
-//#include "Logger.h"
 
 namespace Beast {
-	void updateState(std::string& content, size_t& i) {
 	
-	}
 	bool parseDepFile(const std::string& fileName, const std::string& targetName, std::vector<std::string>& inputFiles) {
 		const int SPECULATED_TOKEN_LEN = 5;
 		std::ifstream file(fileName);
@@ -21,7 +17,7 @@ namespace Beast {
 		// file reading done till here
 		int32_t tokNum = 0;
 		bool inputStarted = false;
-		std::string curOutputToken = "";
+//		std::string curOutputToken = "";
 		inputFiles.clear();
 		std::vector<std::string> outputFiles;
 		std::vector<std::string> *addTo = &outputFiles;

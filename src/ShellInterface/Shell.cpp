@@ -6,14 +6,67 @@
 #include <array>
 #include <stdio.h>
 #include "Error.h"
-#include <sys/wait.h>
+//#include <sys/wait.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdlib.h>
+//#include <stdio.h>
+//#include <signal.h>
+//#include <string.h>
+//#include <sys/wait.h>
 //#include <iostream>
+using namespace std;
 namespace Beast {
 
-    std::string executeCommand(const std::string &command, int &exitStatus) {
+	#define READ   0
+	#define WRITE  1
+	FILE* shellRun(const string& command, int& pid)
+	{
+		pid_t child_pid;
+		int fd[2];
+		pipe(fd);
+		
+		if((child_pid = fork()) == -1)
+		{
+			perror("fork");
+			RAISE_ERROR_AND_EXIT("cannot connect to shell", 1);
+//			exit(1);
+		}
+		
+		/* child process */
+		if (child_pid == 0){
+			close(fd[0]);    //Close the READ end of the pipe since the child's fd is write-only
+			dup2(fd[1], 1); //Redirect stdout to pipe
+			setpgid(child_pid, child_pid); //Needed so negative PIDs can kill children of /bin/sh
+			execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+			exit(0);
+		}
+		else{
+			close(fd[1]); //Close the WRITE end of the pipe since parent's fd is read-only
+		}
+		
+		pid = child_pid;
+		
+		return fdopen(fd[0], "r");
+	}
+	
+	int shellClose(FILE* fp, pid_t pid)
+	{
+		int stat;
+		fclose(fp);
+		waitpid(pid, &stat, 0);
+		if (errno != EINTR) {
+			stat = -1;
+		}
+		return stat;
+	}
+	
+	
+	std::string executeCommand(const std::string &command, int &exitStatus) {
         std::array<char, 128> buffer;
         std::string output;
-        auto shellPipe = popen(command.c_str(), "r");
+        int pid;
+        auto shellPipe = shellRun(command.c_str(), pid);
         if (!shellPipe) {
 			RAISE_ERROR_AND_EXIT("connection to shell could not be established", -1);
         }
@@ -21,8 +74,9 @@ namespace Beast {
             output += buffer.data();
         }
         int status;
-        wait(&status);
-        auto closingStatus = pclose(shellPipe);
+//        wait(&status);
+//        waitpid(pid, &status, 0);
+        auto closingStatus = shellClose(shellPipe, pid);
 	    exitStatus = WEXITSTATUS(status);
         return output;
     }
