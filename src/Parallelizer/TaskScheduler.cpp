@@ -52,6 +52,7 @@ namespace Beast::Parallelizer {
 //				addDependency(inputIndex, outputIndex);
 //			}
 //		}
+		m_FileGraph.setNumTargets(m_FileSystem.numTargets());
 		std::vector<int8_t> state(m_FileSystem.size(), 0);
 		int numRequiredButNotPresent = 0;
 		std::unordered_set<Graph::index_t> requiredButNotPresent;
@@ -69,9 +70,12 @@ namespace Beast::Parallelizer {
 					numRequiredButNotPresent++;
 					requiredButNotPresent.insert(inputIndex);
 				}
-				m_FileGraph.addEdge(inputIndex, outputIndex);
-				addDependency(inputIndex, outputIndex);
+				if (inputIndex < m_FileGraph.numTargets()) {
+					m_FileGraph.addEdge(inputIndex, outputIndex);
+					addDependency(inputIndex, outputIndex);
+				}
 			}
+			getTask(outputIndex);
 		}
 		if (requiredButNotPresent.size()) {
 			RAISE_ERROR_AND_EXIT("Dependency " + m_FileSystem.name(*requiredButNotPresent.begin()) + " does not exist and has no build rule", -1);

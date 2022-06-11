@@ -51,7 +51,7 @@ namespace Beast {
         m_TopologicalSort.clear();
         m_TopologicalSort.reserve(m_NumNodes);
         std::vector<int> visited(m_NumNodes, 0);
-        for (index_t i = m_NumNodes - 1; i >= 0; i--) { // this has been done in reverse so that if sub->C and B->A is defined in this order, then sub->C is executed first
+        for (index_t i = m_NumTargets - 1; i >= 0; i--) { // this has been done in reverse so that if sub->C and B->A is defined in this order, then sub->C is executed first
             if (!visited[i]) {
                 depthFirstSearch(i, visited);
             }
@@ -75,6 +75,7 @@ namespace Beast {
     }
 
     void buildGraph(const FileSystem& fileSystem, const BuildFile& buildFile, Graph& graph) {
+    	graph.setNumTargets(fileSystem.numTargets());
     	std::vector<int8_t> state(fileSystem.size(), 0);
     	FileSystem::index_t numRequiredButNotPresent = 0;
     	std::unordered_set<Graph::index_t> requiredButNotPresent;
@@ -92,7 +93,9 @@ namespace Beast {
             		numRequiredButNotPresent++;
             		requiredButNotPresent.insert(inputIndex);
             	}
-                graph.addEdge(inputIndex, outputIndex);
+            	if (inputIndex < graph.numTargets()) {
+		            graph.addEdge(inputIndex, outputIndex);
+	            }
             }
         }
         if (requiredButNotPresent.size()) {

@@ -52,11 +52,15 @@ namespace Beast {
 		inline index_t size() const {
             return m_Size;
         }
+        inline index_t numTargets() const {
+			return m_NumTargets;
+		}
 		~FileSystem();
 	private:
 		index_t m_Size;
 		std::map<std::string, index_t> m_Index;
 		std::vector<fileRef> m_Files;
+		index_t m_NumTargets;
 		void addFile(const std::string& fileName, index_t index = -1);
 	};
 

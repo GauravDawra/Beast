@@ -53,6 +53,7 @@ namespace Beast {
     	for (BuildFile::index_t i = 0; i < rules.size(); i++) {
     		addFile(rules[i].getOutputTarget());
     	} // this will ensure identity mapping between BuildFile rules and FileSystem files
+    	m_NumTargets = rules.size();
         for (const BuildRule& rule : rules) {
             for (const std::string& input : rule.getInputTargets()) {
                 addFile(input);

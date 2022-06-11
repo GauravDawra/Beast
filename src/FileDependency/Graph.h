@@ -21,11 +21,18 @@ namespace Beast {
         inline const std::vector<int>& getSorted() const {
             return m_TopologicalSort;
         }
+        inline index_t numTargets() const {
+        	return m_NumTargets;
+        }
+        inline void setNumTargets(const index_t& num) {
+        	m_NumTargets = num;
+        }
         bool isCyclical() const;
     private:
         const int m_NumNodes; // value of n
         int m_NumEdges;
         bool m_IsCyclical;
+        index_t m_NumTargets;
         std::vector<std::vector<index_t> > m_AdjacencyList;
         std::vector<index_t> m_TopologicalSort;
         void depthFirstSearch(index_t cur, std::vector<int>& visited);
