@@ -10,8 +10,11 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "Process.h"
+#include <spawn.h>
 
 using namespace std;
+extern char** environ;
 namespace Beast {
 
 	#define READ   0
@@ -75,7 +78,22 @@ namespace Beast {
 	    exitStatus = WEXITSTATUS(status);
         return output;
     }
+	
+    std::string executeCommand_Spawn(const std::string& command, int& exitStatus) {
+//		Process* pro = new Process(command, exitStatus);
 
+	    const char* args[] = {"/bin/sh", "-c", command.c_str(), NULL};
+	    pid_t pid;
+	    auto status = posix_spawn(&pid, "/bin/sh", NULL, NULL, const_cast<char**>(args), environ);
+	    if (status) {
+		    RAISE_ERROR_AND_EXIT(strerror(status), -1);
+	    }
+//	    int status;
+	    waitpid(pid, &status, 0);
+	    exitStatus = WEXITSTATUS(status);
+	    return "";
+	}
+    
     std::string executeCommands(const std::vector<std::string> &commands, int &exitStatus) {
 	    std::string jointCommand = "";
 	    for (int i = 0; i < commands.size(); i++) {

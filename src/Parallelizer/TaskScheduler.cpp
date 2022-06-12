@@ -40,7 +40,7 @@ namespace Beast::Parallelizer {
 			);
 //			.name(m_FileSystem.name(target)); // not required now but can be used later
 		}
-		return (*it).second;
+		return it->second;
 	}
 	
 	void TaskScheduler::buildGraphAndDependencies() {
