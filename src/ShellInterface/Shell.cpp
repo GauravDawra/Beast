@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "Process.h"
 #include <spawn.h>
+#include <string.h>
 
 using namespace std;
 extern char** environ;
