@@ -50,32 +50,33 @@ namespace Beast {
     	// FileSystem's File's
     	const std::vector<BuildRule>& rules = buildFile.getRules();
     	m_Files.reserve(rules.size());
+	    bool somethingToBuild = false; // will check if there is even something to build
     	for (BuildFile::index_t i = 0; i < rules.size(); i++) {
-    		addFile(rules[i].getOutputTarget());
+    		auto outputRef = getReference(addFile(rules[i].getOutputTarget()));
+    		if (!outputRef->exists()) { // build if file does not exist
+    			rules[i].setToBuild();
+    			somethingToBuild = true;
+    		}
     	} // this will ensure identity mapping between BuildFile rules and FileSystem files
     	m_NumTargets = rules.size();
+    	
+    	// TODO: try to make this into one loop (the above loop and this following)
         for (BuildFile::index_t i = 0; i < rules.size(); i++) {
         	auto outStamp = getReference(i)->timeStamp();
             for (const std::string& input : rules[i].getInputTargets()) {
-                auto inputIndex = addFile(input);
-                if (getReference(inputIndex)->timeStamp() > outStamp) {
+                auto inputRef = getReference(addFile(input));
+                if (inputRef->timeStamp() > outStamp) {
                 	rules[i].setToBuild();
+                	somethingToBuild = true;
                 }
             }
         }
+        if (!somethingToBuild) {
+	        LOG("nothing to build");
+	        exit(0);
+        }
     }
-//    FileSystem::FileSystem(const BuildFile &buildFile, Graph& graph) : m_Size(0) {
-//        for (const BuildRule& rule : buildFile.getRules()) {
-//            const std::string& output = rule.getOutputTarget();
-//            addFile(output);
-//            graph.tillIndex(index(output));
-//            for (const std::string& input : rule.getInputTargets()) {
-//                addFile(input);
-//                graph.tillIndex(index(input));
-//                graph.addEdgeIncremental(index(input), index(output));
-//            }
-//        }
-//    }
+
     FileSystem::index_t FileSystem::index(const std::string& fileName) const {
         auto it = m_Index.find(fileName);
         if (it != m_Index.end()) {

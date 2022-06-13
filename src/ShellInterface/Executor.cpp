@@ -55,7 +55,7 @@ namespace Beast::Builder {
 	int checkAndBuild(const FileSystem::index_t& target, const BuildFile& buildFile, const FileSystem& fileSystem) {
 		auto rule = buildFile.getRule(target);
 		if (rule == nullptr) return 0; // originally it was with the timestamp check below
-		auto file = fileSystem.getReference(target);
+//		auto file = fileSystem.getReference(target);
 		
 //		if(rule == nullptr and !file->exists()) {
 //			RAISE_ERROR(file->name() + " doesn't exist and has no build rule");
@@ -65,8 +65,8 @@ namespace Beast::Builder {
 //		if (!checkTimeStamps(*rule, fileSystem))
 //			return 0;
 //
-		if (!rule->toBuild() && file->exists()) {
-			auto outStamp = file->timeStamp();
+		if (!rule->toBuild()) { //  && file->exists()
+//			auto outStamp = file->timeStamp();
 			auto inputTargets = rule->getInputTargets();
 			bool buildTarget = false;
 			for (int i = 0; i < inputTargets.size(); i++) {
@@ -80,18 +80,13 @@ namespace Beast::Builder {
 			}
 			if (!buildTarget) return 0;
 		}
-//		if(rule == nullptr || !checkTimeStamps(*rule, fileSystem)) {
-//			// no need to build
-//			return 0;
-//		}
-		
+
 		// if control reaches this point, then the rule is surely being built
-		LOG("Building rule " + file->name());
+		LOG("Building rule " + rule->getOutputTarget());
 		int exitStatus = 0;
 		printf("%s", rule->build(exitStatus).c_str());
-//		std::cout << rule->build(exitStatus);
 		if(exitStatus){
-			RAISE_ERROR("Problem in building rule \"" + file->name() + "\"");
+			RAISE_ERROR("Problem in building rule \"" + rule->getOutputTarget() + "\"");
 			return exitStatus;
 		}
 //		file->refresh();
