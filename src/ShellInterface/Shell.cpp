@@ -89,7 +89,6 @@ namespace Beast {
 	    if (status) {
 		    RAISE_ERROR_AND_EXIT(strerror(status), -1);
 	    }
-//	    int status;
 	    waitpid(pid, &status, 0);
 	    exitStatus = WEXITSTATUS(status);
 	    return "";
