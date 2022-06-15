@@ -85,6 +85,7 @@ namespace Beast::Builder {
 		LOG("Building rule " + rule->getOutputTarget());
 		int exitStatus = 0;
 //		printf("%s", rule->build(exitStatus).c_str());
+		rule->build(exitStatus);
 		if(exitStatus){
 			RAISE_ERROR("Problem in building rule \"" + rule->getOutputTarget() + "\"");
 			return exitStatus;

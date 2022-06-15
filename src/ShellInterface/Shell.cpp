@@ -2,7 +2,6 @@
 // Created by Gaurav Dawra on 29/12/21.
 //
 
-#define _GNU_SOURCE
 #include "Shell.h"
 #include <array>
 #include <stdio.h>
@@ -97,9 +96,6 @@ namespace Beast {
 	    if (status) {
 		    RAISE_ERROR_AND_EXIT(strerror(status), -1);
 	    }
-	    if (posix_spawnattr_destroy(&attr)) {
-		    RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
-	    }
 	    waitpid(pid, &status, 0);
 	    exitStatus = WEXITSTATUS(status);
 //	    return "";
@@ -112,8 +108,8 @@ namespace Beast {
 		    jointCommand += (i == commands.size() - 1 ?
 		                     commands[i] : commands[i] + " && ");
 	    }
-	    
-	    return EXECUTE(jointCommand, exitStatus);
+	    EXECUTE(jointCommand, exitStatus);
+//	    return "";
     }
 
 //    bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem) {
