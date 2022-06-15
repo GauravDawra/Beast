@@ -14,7 +14,7 @@ namespace Beast {
     std::string executeCommand(const std::string& command, int& exitStatus);
 //    #define EXECUTE(comm, status) executeCommand(comm, status)
 	#define EXECUTE(comm, status) executeCommand_Spawn(comm, status)
-    std::string executeCommands(const std::vector<std::string>& commands, int& exitStatus);
+    void executeCommands(const std::vector<std::string>& commands, int& exitStatus);
 //    bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem);
     
 }

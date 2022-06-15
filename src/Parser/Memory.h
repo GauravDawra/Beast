@@ -97,7 +97,8 @@ namespace Beast {
         }
         void resolveDepFile();
         void resolveCommands(const SymbolTable& baseTable);
-        std::string build(int &exitStatus) const;
+//        std::string build(int &exitStatus) const;
+	    void build(int &exitStatus) const;
     private:
 	    std::string m_OutputTarget;
 	    std::vector<std::string> m_InputTargets;

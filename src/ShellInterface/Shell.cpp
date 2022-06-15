@@ -2,6 +2,7 @@
 // Created by Gaurav Dawra on 29/12/21.
 //
 
+#define _GNU_SOURCE
 #include "Shell.h"
 #include <array>
 #include <stdio.h>
@@ -80,21 +81,31 @@ namespace Beast {
         return output;
     }
 	
-    std::string executeCommand_Spawn(const std::string& command, int& exitStatus) {
+    void executeCommand_Spawn(const std::string& command, int& exitStatus) {
 //		Process* pro = new Process(command, exitStatus);
-
+	    posix_spawnattr_t attr;
+		if (posix_spawnattr_init(&attr)) {
+			RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
+		}
+		
+//		if (posix_spawnattr_setflags(&attr, POSIX_SPAWN_USEVFORK)) {
+//			RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
+//		}
 	    const char* args[] = {"/bin/sh", "-c", command.c_str(), NULL};
 	    pid_t pid;
-	    auto status = posix_spawn(&pid, "/bin/sh", NULL, NULL, const_cast<char**>(args), environ);
+	    auto status = posix_spawn(&pid, "/bin/sh", NULL, &attr, const_cast<char**>(args), environ);
 	    if (status) {
 		    RAISE_ERROR_AND_EXIT(strerror(status), -1);
 	    }
+	    if (posix_spawnattr_destroy(&attr)) {
+		    RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
+	    }
 	    waitpid(pid, &status, 0);
 	    exitStatus = WEXITSTATUS(status);
-	    return "";
+//	    return "";
 	}
     
-    std::string executeCommands(const std::vector<std::string> &commands, int &exitStatus) {
+    void executeCommands(const std::vector<std::string> &commands, int &exitStatus) {
 	    std::string jointCommand = "";
 	    for (int i = 0; i < commands.size(); i++) {
 		    // joining the commands using && so that they return on a single failure

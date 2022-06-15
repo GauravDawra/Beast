@@ -111,10 +111,15 @@ namespace Beast {
 	    }
 	}
 	
-	std::string BuildRule::build(int &exitStatus) const {
-		std::string output = executeCommands(m_Commands, exitStatus);
+//	std::string BuildRule::build(int &exitStatus) const {
+//		std::string output = executeCommands(m_Commands, exitStatus);
+//		m_Built = true;
+//		return output;
+//	}
+	void BuildRule::build(int &exitStatus) const {
+		executeCommands(m_Commands, exitStatus);
 		m_Built = true;
-		return output;
+//		return output;
 	}
 	
 //	void BuildRule::resolveCommand(const SymbolTable& baseTable, std::string& command) {

@@ -84,7 +84,7 @@ namespace Beast::Builder {
 		// if control reaches this point, then the rule is surely being built
 		LOG("Building rule " + rule->getOutputTarget());
 		int exitStatus = 0;
-		printf("%s", rule->build(exitStatus).c_str());
+//		printf("%s", rule->build(exitStatus).c_str());
 		if(exitStatus){
 			RAISE_ERROR("Problem in building rule \"" + rule->getOutputTarget() + "\"");
 			return exitStatus;
