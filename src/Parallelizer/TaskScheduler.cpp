@@ -73,6 +73,9 @@ namespace Beast::Parallelizer {
 				if (inputIndex < m_FileGraph.numTargets()) {
 					m_FileGraph.addEdge(inputIndex, outputIndex);
 					addDependency(inputIndex, outputIndex);
+					if (m_BuildFile.getRule(inputIndex)->toBuild()) {
+						rule.setToBuild();
+					}
 				}
 			}
 			getTask(outputIndex);

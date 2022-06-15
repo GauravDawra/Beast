@@ -1,7 +1,7 @@
 //
 // Created by Gaurav Dawra on 29/12/21.
 //
-
+#define _GNU_SOURCE
 #include "Shell.h"
 #include <array>
 #include <stdio.h>
@@ -10,7 +10,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "Process.h"
 #include <spawn.h>
 #include <string.h>
 
@@ -81,21 +80,22 @@ namespace Beast {
     }
 	
     void executeCommand_Spawn(const std::string& command, int& exitStatus) {
-//		Process* pro = new Process(command, exitStatus);
 	    posix_spawnattr_t attr;
 		if (posix_spawnattr_init(&attr)) {
 			RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
 		}
-		
-//		if (posix_spawnattr_setflags(&attr, POSIX_SPAWN_USEVFORK)) {
-//			RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
-//		}
+#ifdef POSIX_SPAWN_USEVFORK
+		if (posix_spawnattr_setflags(&attr, POSIX_SPAWN_USEVFORK)) {
+			RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
+		}
+#endif
 	    const char* args[] = {"/bin/sh", "-c", command.c_str(), NULL};
 	    pid_t pid;
 	    auto status = posix_spawn(&pid, "/bin/sh", NULL, &attr, const_cast<char**>(args), environ);
 	    if (status) {
 		    RAISE_ERROR_AND_EXIT(strerror(status), -1);
 	    }
+	    if (posix_spawnattr_destroy(&attr)); // decide later
 	    waitpid(pid, &status, 0);
 	    exitStatus = WEXITSTATUS(status);
 //	    return "";

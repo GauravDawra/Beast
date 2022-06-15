@@ -95,6 +95,9 @@ namespace Beast {
             	}
             	if (inputIndex < graph.numTargets()) {
 		            graph.addEdge(inputIndex, outputIndex);
+		            if (buildFile.getRule(inputIndex)->toBuild()) {
+		            	rule.setToBuild();
+		            }
 	            }
             }
         }
