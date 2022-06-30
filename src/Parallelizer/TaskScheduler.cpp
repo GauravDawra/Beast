@@ -14,7 +14,6 @@ namespace Beast::Parallelizer {
 		
 		// build the graph and dependencies first
 		buildGraphAndDependencies();
-//		buildGraph(m_FileSystem, m_BuildFile, m_FileGraph, this);
 		m_FileGraph.topologicalSort();
 		LOG_DEBUG("At the end of task scheduler");
 	}
@@ -38,20 +37,12 @@ namespace Beast::Parallelizer {
 					LOG_DEBUG("Build complete for " + target);
 				}
 			);
-//			.name(m_FileSystem.name(target)); // not required now but can be used later
+			// .name(m_FileSystem.name(target)); // not required now but can be used later
 		}
 		return it->second;
 	}
 	
 	void TaskScheduler::buildGraphAndDependencies() {
-//		for (const BuildRule& rule : m_BuildFile.getRules()) {
-//			FileSystem::index_t outputIndex = m_FileSystem.index(rule.getOutputTarget());
-//			for (const std::string& inputTarget : rule.getInputTargets()) {
-//				FileSystem::index_t inputIndex = m_FileSystem.index(inputTarget);
-//				m_FileGraph.addEdge(inputIndex, outputIndex);
-//				addDependency(inputIndex, outputIndex);
-//			}
-//		}
 		m_FileGraph.setNumTargets(m_FileSystem.numTargets());
 		std::vector<int8_t> state(m_FileSystem.size(), 0);
 		int numRequiredButNotPresent = 0;

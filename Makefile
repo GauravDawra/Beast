@@ -12,13 +12,12 @@ DEFINES += -DBEAST_RELEASE
 FLAGS += -O3
 endif
 
-FLAGS += -std=c++2a -g $(include_dirs:%=-I%) $(DEFINES) -pthread
+FLAGS += -std=c++2a $(include_dirs:%=-I%) $(DEFINES) -pthread
 SUBDIRS := src/Logger src/Parser src/FileDependency src/ShellInterface src/Parallelizer
 
 export CXX
 export DEFINES
 export MODE
-#export FLAGS
 
 all: $(SUBDIRS) $(TARGET)
 
@@ -27,14 +26,11 @@ $(SUBDIRS):
 
 $(TARGET): main.cpp src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o
 	$(CXX) $(FLAGS) src/Parser/parser.o src/FileDependency/fileDependency.o src/ShellInterface/ShellInterface.o src/Logger/logger.o src/Parallelizer/TaskScheduler.o main.cpp -o $(TARGET)
-#	./main < ./src/Parser/beast.build
-# 	src/Parser/variable_type.cpp src/Parser/scanner.cpp src/Parser/parser.cpp src/Parser/Memory.cpp
 
 run: | $(TARGET)
 	./$(TARGET)
 
 clean:
-#	$(MAKE) clean $(SUBDIRS:%=-C %)
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
   	done
