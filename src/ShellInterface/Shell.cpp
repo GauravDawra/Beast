@@ -14,11 +14,11 @@
 #include <string.h>
 
 using namespace std;
-extern char** environ;
-namespace Beast {
 
-	#define READ   0
-	#define WRITE  1
+extern char** environ;
+
+namespace Beast {
+	
 	FILE* shellRun(const string& command, int& pid) {
 		pid_t child_pid;
 		int fd[2];
@@ -28,7 +28,6 @@ namespace Beast {
 		{
 			perror("fork");
 			RAISE_ERROR_AND_EXIT("cannot connect to shell", 1);
-//			exit(1);
 		}
 		
 		/* child process */
@@ -72,8 +71,8 @@ namespace Beast {
             output += buffer.data();
         }
         int status;
-//        wait(&status);
-//        waitpid(pid, &status, 0);
+        // wait(&status);
+        // waitpid(pid, &status, 0);
         auto closingStatus = shellClose(shellPipe, pid);
 	    exitStatus = WEXITSTATUS(status);
         return output;
@@ -98,7 +97,6 @@ namespace Beast {
 	    if (posix_spawnattr_destroy(&attr)); // decide later
 	    waitpid(pid, &status, 0);
 	    exitStatus = WEXITSTATUS(status);
-//	    return "";
 	}
     
     void executeCommands(const std::vector<std::string> &commands, int &exitStatus) {
@@ -109,21 +107,5 @@ namespace Beast {
 		                     commands[i] : commands[i] + " && ");
 	    }
 	    EXECUTE(jointCommand, exitStatus);
-//	    return "";
     }
-
-//    bool checkTimeStamps(const BuildRule& rule, const FileSystem& fileSystem) {
-//    	FileSystem::constFileRef outputTarget = fileSystem.getReference(rule.getOutputTarget());
-//    	if (!outputTarget->exists()) {
-//		    // if the file doesn't exist, always build it
-//    		return true;
-//    	}
-//        auto outStamp = outputTarget->timeStamp();
-//        for (const std::string& inputFile : rule.getInputTargets()) {
-//            if (fileSystem.getReference(inputFile)->timeStamp() > outStamp) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 }
