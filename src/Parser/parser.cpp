@@ -1017,7 +1017,7 @@ namespace Beast {
 
   case 24: // expr: STRING_LIT
 #line 186 "main.ypp"
-                                    {yylhs.value.as < MULTI_TYPE > () = yystack_[0].value.as < std::string > ();}
+                                    {yylhs.value.as < MULTI_TYPE > () = yystack_[0].value.as < std::string > (); s_ScratchTable.resolve(std::get<type::STRING>(yylhs.value.as < MULTI_TYPE > ()), buildFile);}
 #line 1022 "parser.cpp"
     break;
 
