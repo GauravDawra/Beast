@@ -101,7 +101,7 @@ namespace Beast::Parallelizer {
 		if (m_FileGraph.isCyclical()) {
 			RAISE_ERROR_AND_EXIT("Dependencies are cyclical", -1);
 		}
-		tf::Executor executor(numThreads);
+		tf::Executor executor(numThreads, THREAD_BINDER);
 		executor.run(m_Taskflow).wait();
 	}
 	
