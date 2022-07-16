@@ -14,8 +14,8 @@
 #include "cxxopts.hpp"
 
 const char* BUILD_FILE_NAME = "beast.build";
-#define SET_CWD(cwd) if(cwd.length()) \
-						std::filesystem::current_path(cwd);
+#define SET_CWD(cwd) try { if(cwd.length()) std::filesystem::current_path(cwd); } \
+					catch (std::exception& e) { Beast::RAISE_ERROR_AND_EXIT("couldn't open directory " + cwd, -1); }
 
 int main(int argc, char* argv[]) {
 #ifdef BEAST_DEBUG

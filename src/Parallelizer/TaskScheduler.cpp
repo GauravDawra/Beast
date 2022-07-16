@@ -79,16 +79,14 @@ namespace Beast::Parallelizer {
 	namespace {
 		class _ThreadBinder : public tf::WorkerInterface {
 		public:
-			// to call before the worker enters the scheduling loop
 			void scheduler_prologue(tf::Worker& w) override {
 			#ifdef __GLIBC__
-				 cpu_set_t cpuset;
-				 CPU_ZERO(&cpuset);
-				 CPU_SET(w.id(), &cpuset);
-				 pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+		        cpu_set_t cpuset;
+		        CPU_ZERO(&cpuset);
+		        CPU_SET(w.id(), &cpuset);
+		        pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
 			#endif
 			}
-			// to call after the worker leaves the scheduling loop
 			void scheduler_epilogue(tf::Worker& w, std::exception_ptr) override {
 			}
 		};
