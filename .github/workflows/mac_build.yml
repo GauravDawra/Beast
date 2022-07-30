@@ -23,11 +23,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: mkdir build
-        run: mkdir build
+        run: mkdir build && cd build
       - name: generate cmake files
-        run: cmake -Bbuild
+        run: cmake ..
       - name: build
-        run: cmake --build build
+        run: cmake --build .
 #  debug-build:
 #
 #    runs-on: macos-latest
