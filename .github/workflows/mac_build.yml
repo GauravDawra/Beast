@@ -18,6 +18,16 @@ jobs:
       - name: make
         run: make MODE=RELEASE
 
+  cmake-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: mkdir build
+        run: mkdir build
+      - name: generate cmake files
+        run: cmake -Bbuild
+      - name: build
+        run: cmake --build build
 #  debug-build:
 #
 #    runs-on: macos-latest
