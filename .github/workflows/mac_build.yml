@@ -22,12 +22,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+            submodules: recursive
       - name: mkdir build
         run: mkdir build && cd build
       - name: generate cmake files
-        run: cmake ..
+        run: cmake -Bbuild
       - name: build
-        run: cmake --build .
+        run: cmake --build build
 #  debug-build:
 #
 #    runs-on: macos-latest
