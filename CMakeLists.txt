@@ -14,25 +14,8 @@ else()
 endif()
 
 
-add_executable(${TARGET}
+add_executable (${TARGET}
         main.cpp
-
-#        src/Parser/parser.cpp
-#        src/Parser/scanner.cpp
-#        src/Parser/DepFileParser.cpp
-#        src/Parser/Memory.cpp
-#        src/Parser/variable_type.cpp
-#
-#        src/Logger/Error.cpp
-#        src/Logger/Logger.cpp
-#
-#        src/FileDependency/Filesystem.cpp
-#        src/FileDependency/Graph.cpp
-#
-#        src/ShellInterface/Executor.cpp
-#        src/ShellInterface/Shell.cpp
-#
-#        src/Parallelizer/TaskScheduler.cpp
         )
 
 set(moduleList Parser; Logger; FileDependency; ShellInterface; Parallelizer)

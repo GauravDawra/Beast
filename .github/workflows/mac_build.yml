@@ -7,10 +7,8 @@ on:
     branches: [ master ]
 
 jobs:
-  release-build:
-
+  make-release-build:
     runs-on: macos-latest
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -24,17 +22,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
             submodules: recursive
-      - name: mkdir build
+      - name: build directory
         run: mkdir build && cd build
       - name: generate cmake files
         run: cmake -Bbuild
       - name: build
         run: cmake --build build
-#  debug-build:
-#
-#    runs-on: macos-latest
-#
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: make
-#        run: make MODE=DEBUG
