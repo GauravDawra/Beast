@@ -20,10 +20,7 @@ extern char** environ;
 #endif
 #include <string.h>
 
-
 using namespace std;
-
-extern char** environ;
 
 namespace Beast {
 #ifdef _WIN32
