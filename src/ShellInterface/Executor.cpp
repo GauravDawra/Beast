@@ -11,11 +11,11 @@
 
 namespace Beast::Builder {
 	
-	void setEnvironmentVariables(const SymbolTable &env) {
+	/*void setEnvironmentVariables(const SymbolTable &env) {
 		for (const auto & it : env) {
 			setenv(it.first.c_str(), toString(it.second).c_str(), 1);
 		}
-	}
+	}*/
 	
 //	static std::string buildRule(const BuildRule& rule, int& exitStatus) {
 //		std::string output = executeCommands(rule.getCommands(), exitStatus);

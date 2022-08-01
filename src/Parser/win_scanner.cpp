@@ -528,14 +528,11 @@ int line_num = 1;
 #define sc_BUILD 1
 #define sc_WORD 2
 
-#ifndef YY_NO_UNISTD_H
-/* Special case for "unistd.h", since it is non-ANSI. We include it way
- * down here because we want the user's section 1 to have been scanned first.
- * The user has a chance to override it with an option.
- */
-#include <unistd.h>
-#endif
-
+/*windows compatibility case*/
+#include <io.h>
+#define isatty _isatty
+#define fileno _fileno
+    
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *
 #endif
@@ -788,7 +785,7 @@ YY_DECL
 
 
 
-#line 791 "scanner.cpp"
+#line 788 "scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -974,7 +971,7 @@ YY_RULE_SETUP
 #line 55 "main.lpp"
 ECHO;
 	YY_BREAK
-#line 977 "scanner.cpp"
+#line 974 "scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(sc_BUILD):
 case YY_STATE_EOF(sc_WORD):

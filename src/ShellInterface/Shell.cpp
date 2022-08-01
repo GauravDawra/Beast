@@ -3,22 +3,93 @@
 //
 #define _GNU_SOURCE
 #include "Shell.h"
-#include <array>
-#include <stdio.h>
 #include "Error.h"
+
+#include <array>
+
+#ifndef _WIN32
+#include <stdio.h>
 #include <sys/wait.h>
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <spawn.h>
+extern char** environ;
+#else
+#include <windows.h>
+#endif
 #include <string.h>
+
 
 using namespace std;
 
 extern char** environ;
 
 namespace Beast {
-	
+#ifdef _WIN32
+	void WIN_executeCommand(const std::string& command, int& exitStatus) {
+		static HANDLE std_out = GetStdHandle(STD_OUTPUT_HANDLE);
+		STARTUPINFO startupInfo = { };
+		PROCESS_INFORMATION processInfo;
+
+		SECURITY_ATTRIBUTES secAttr = {};
+		secAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+		secAttr.bInheritHandle = TRUE;
+		secAttr.lpSecurityDescriptor = NULL;
+
+		HANDLE childWrite = NULL, parentRead = NULL; // 2 ends of a pipe
+
+		CreatePipe(&parentRead, &childWrite, &secAttr, 0);
+
+		SetHandleInformation(parentRead, HANDLE_FLAG_INHERIT, 0);
+
+		startupInfo.cb = sizeof(STARTUPINFO);
+		startupInfo.hStdInput = NULL;
+		startupInfo.hStdError = childWrite;
+		startupInfo.hStdOutput = childWrite;
+		startupInfo.dwFlags |= STARTF_USESTDHANDLES;
+
+		std::string cmd = "cmd.exe /c " + command;
+
+		if (!CreateProcess(NULL,
+			(char*)(cmd.c_str()),
+			NULL,
+			NULL,
+			TRUE,
+			CREATE_NO_WINDOW,
+			NULL,
+			NULL,
+			&startupInfo,
+			&processInfo))
+		{
+			WaitForSingleObject(processInfo.hProcess, INFINITE);
+			CloseHandle(processInfo.hProcess);
+			CloseHandle(processInfo.hThread);
+			RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
+		}
+
+		CloseHandle(childWrite); // close this for parent process
+
+		DWORD readLen = 1, writtenToStdout = 0;
+#define MAX_BUF_SIZE 64 << 10
+		char buffer[MAX_BUF_SIZE];
+		while (readLen) {
+			if (!ReadFile(parentRead, buffer, MAX_BUF_SIZE, &readLen, NULL) &&
+				GetLastError() != ERROR_BROKEN_PIPE) {
+				RAISE_ERROR_AND_EXIT("Cannot create new process", -1);
+			}
+			WriteFile(std_out, buffer, readLen, &writtenToStdout, NULL);
+		}
+
+		// Check for the failure of 2 functions below
+		WaitForSingleObject(processInfo.hProcess, INFINITE);
+		GetExitCodeProcess(processInfo.hProcess, (LPDWORD)&exitStatus);
+
+		CloseHandle(parentRead);
+		CloseHandle(processInfo.hProcess);
+		CloseHandle(processInfo.hThread);
+	}
+#else
 	FILE* shellRun(const string& command, int& pid) {
 		pid_t child_pid;
 		int fd[2];
@@ -98,7 +169,7 @@ namespace Beast {
 	    waitpid(pid, &status, 0);
 	    exitStatus = WEXITSTATUS(status);
 	}
-    
+#endif
     void executeCommands(const std::vector<std::string> &commands, int &exitStatus) {
 	    std::string jointCommand = "";
 	    for (int i = 0; i < commands.size(); i++) {

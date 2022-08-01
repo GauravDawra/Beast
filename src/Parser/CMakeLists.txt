@@ -1,8 +1,12 @@
 set(TARGET Parser) # setting the Parser library name
-
+if(WIN32)
+    set(SCANNER "win_scanner.cpp")
+else()
+    set(SCANNER "unix_scanner.cpp")
+endif()
 add_library(${TARGET}  STATIC
         parser.cpp
-        scanner.cpp
+        ${SCANNER}
         Memory.cpp
         variable_type.cpp
         DepFileParser.cpp)
