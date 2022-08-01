@@ -1,0 +1,21 @@
+name: Windows
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  cmake-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+            submodules: recursive
+      - name: build directory
+        run: mkdir build && cd build
+      - name: generate cmake files
+        run: cmake -Bbuild
+      - name: build
+        run: cmake --build build
