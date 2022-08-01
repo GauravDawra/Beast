@@ -45,7 +45,7 @@
 // #include <iostream>
 // #include <vector>
 #include <string>
-#include "scanner.h"
+#include "unix_scanner.h"
 #include "Memory.h"
 #include "Logger.h"
 #include "Error.h"

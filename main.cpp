@@ -1,6 +1,6 @@
 #include "Filesystem.h"
 #include <vector>
-#include "scanner.h"
+#include "unix_scanner.h"
 #include "parser.hpp"
 #include "Memory.h"
 #include "Graph.h"

@@ -9,7 +9,7 @@ endif
 
 OBJ_DIR = ./bin_int
 
-all: scanner.cpp parser.cpp $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o $(OBJ_DIR)/DepFileParser.o parser.o
+all: unix_scanner.cpp parser.cpp $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o $(OBJ_DIR)/DepFileParser.o parser.o
 
 scanner.cpp: main.lpp
 	flex main.lpp
@@ -27,7 +27,7 @@ DEP = $(OBJ:%.o=%.d)
 $(OBJ_DIR)/parser.o : parser.cpp | $(OBJ_DIR)
 	${CXX} ${FLAGS} -c $< -MMD -o $@
 
-$(OBJ_DIR)/scanner.o : scanner.cpp | $(OBJ_DIR)
+$(OBJ_DIR)/scanner.o : unix_scanner.cpp | $(OBJ_DIR)
 	${CXX} ${FLAGS} -c $< -MMD -o $@
 
 $(OBJ_DIR)/Memory.o : Memory.cpp | $(OBJ_DIR)
