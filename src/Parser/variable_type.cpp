@@ -1,5 +1,5 @@
 #include "variable_type.h"
-#include "unix_scanner.h"
+#include "scanner.h"
 #include "parser.hpp"
 #include <iostream>
 #include "Error.h"
