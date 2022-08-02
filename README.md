@@ -12,6 +12,7 @@ The complete documentation for ***Beast*** can be found [here](https://gauravdaw
 
 [![MacOS](https://github.com/GauravDawra/Beast/actions/workflows/mac_build.yml/badge.svg)](https://github.com/GauravDawra/Beast/actions?query=workflow%3AMacOS)
 [![Ubuntu](https://github.com/GauravDawra/Beast/actions/workflows/ubuntu_build.yml/badge.svg)](https://github.com/GauravDawra/Beast/actions?query=workflow%3AUbuntu)
+[![Windows](https://github.com/GauravDawra/Beast/actions/workflows/windows_build.yml/badge.svg)](https://github.com/GauravDawra/Beast/actions?query=workflow%3AWindows)
 
 Beast builds projects based on the information provided in a *beast build file*. In this build file, the user defines what all items need to be built (*targets*), how they should be built (*build rules*), and what all targets need to be ready to build a particular target (*dependencies*). In this way, Beast works on a comprehensive and easy to use target-dependency model. For more information about the particular aspects of a build file, see [**Writing a Beast File**](https://gauravdawra.github.io/Beast-docs/mainDocs/writingABeastFile).
 
