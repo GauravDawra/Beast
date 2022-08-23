@@ -11,8 +11,8 @@ OBJ_DIR = ./bin_int
 
 all: unix_scanner.cpp parser.cpp $(OBJ_DIR)/parser.o $(OBJ_DIR)/scanner.o $(OBJ_DIR)/Memory.o $(OBJ_DIR)/variable_type.o $(OBJ_DIR)/DepFileParser.o parser.o
 
-scanner.cpp: main.lpp
-	flex main.lpp
+#scanner.cpp: main.lpp
+#	flex main.lpp
 
 parser.cpp: main.ypp
 	bison main.ypp
@@ -66,4 +66,12 @@ test: test.cpp
 clean:
 	rm -rf $(OBJ_DIR) parser.o
 
-.PHONY: all clean
+SCANNER_NAME = unix_scanner
+ifeq ($(OS), Windows_NT)
+	SCANNER_NAME = win_scanner
+endif
+
+gen_scanner:
+	flex --outfile=$(SCANNER_NAME).cpp --header-file=$(SCANNER_NAME).h main.lpp
+
+.PHONY: all clean gen_scanner

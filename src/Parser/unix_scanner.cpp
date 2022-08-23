@@ -1,6 +1,6 @@
-#line 1 "scanner.cpp"
+#line 1 "unix_scanner.cpp"
 
-#line 3 "scanner.cpp"
+#line 3 "unix_scanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -516,13 +516,13 @@ int line_num = 1;
 #else
     #define print(a) 
 #endif
-#line 519 "scanner.cpp"
+#line 519 "unix_scanner.cpp"
 /*%option bison-bridge*/
 /*%option bison-locations*/
 /* %option debug */
 /*"def"                     return token::DEF;*/
 
-#line 525 "scanner.cpp"
+#line 525 "unix_scanner.cpp"
 
 #define INITIAL 0
 #define sc_BUILD 1
@@ -788,7 +788,7 @@ YY_DECL
 
 
 
-#line 791 "scanner.cpp"
+#line 791 "unix_scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -974,7 +974,7 @@ YY_RULE_SETUP
 #line 55 "main.lpp"
 ECHO;
 	YY_BREAK
-#line 977 "scanner.cpp"
+#line 977 "unix_scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(sc_BUILD):
 case YY_STATE_EOF(sc_WORD):

@@ -15,7 +15,7 @@ int line_num = 1;
 #endif
 %}
 
-%option reentrant interactive outfile="scanner.cpp" header="scanner.h"
+%option reentrant interactive
 %option yylineno
 /*%option bison-bridge*/
 /*%option bison-locations*/

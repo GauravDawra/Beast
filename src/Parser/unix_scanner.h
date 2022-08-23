@@ -2,9 +2,9 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 5 "scanner.h"
+#line 5 "unix_scanner.h"
 
-#line 7 "scanner.h"
+#line 7 "unix_scanner.h"
 
 #define  YY_INT_ALIGNED short int
 
@@ -486,6 +486,6 @@ extern int yylex (yyscan_t yyscanner);
 #line 55 "main.lpp"
 
 
-#line 489 "scanner.h"
+#line 489 "unix_scanner.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */
