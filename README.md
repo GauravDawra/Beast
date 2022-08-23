@@ -2,7 +2,7 @@
 <p align="center">
 <img style="align: center;" src="resources/logo/logo.png" title="Logo" height="600px"  /></p>
 Beast is a build system designed for the purpose of power,
-speed and productivity. This build system tries to combine ease 
+speed and productivity. It is a cross-platform, general purpose build tool that combines ease 
 of use with high efficiency. It is very easy to use syntactically,
 and also provides great build times!
 
@@ -39,7 +39,10 @@ You can directly download your system specific binaries from the release section
 Once you have downloaded the binaries, make sure that the location of this executable is present in the *PATH* environment variable. */usr/local/bin* is the preferred position to place the *beast* executable.
 
 ### Compiling from source
-For compiling the souce, you would require:
+#### Using *Make*
+*This method of compiling the source using Make is just used for building targets for MacOS or Linux systems*
+
+For compiling the source, you would require:
 - make
 - GNU G++ (>= 10.0) or Clang
 - flex
@@ -67,6 +70,31 @@ Follow these steps to compile:
         make install
     
     This is a root action so you will have to enter your password for this step. If you don't want to install this to your */usr/local/bin*, you can directly use the *beast* binary.
+
+#### Using CMake
+*This method of build using CMake can be used for building targets for MacOS, Linux and Windows systems*
+
+1. Clone the github Beast repository with the following command:
+   ```
+   git clone https://github.com/GauravDawra/Beast Beast --recursive
+   ``` 
+   Make sure you use the *--recursive* flag since the code has some submodule dependencies
+
+2. Move into the *Beast* directory using
+
+        cd Beast
+   Now create a build directory and navigate to it:
+      
+         mkdir build && cd build
+   
+3. Now, let us create cmake build files:
+         
+         cmake .. -DCAME_BUILD_TYPE=Release
+   You can choose to create the *Debug* build by using the *-DCAME_BUILD_TYPE=Debug*
+   option instead of *-DCAME_BUILD_TYPE=Release*.
+4. Let us finally build the project using the following command:
+         
+         cmake --build .
 
 ## <p id="getting-started">Getting started with ***Beast***</p>
 Beast has a very simple to follow Quickstart which helps you use Beast in a sample project. This quickstart can be found in the [quickstart repository](https://github.com/GauravDawra/Beast-quickstart) or in the documentation [Quickstart](https://gauravdawra.github.io/Beast-docs/quickStart/beast-quickstart) page.
